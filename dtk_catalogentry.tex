@@ -1,0 +1,207 @@
+\documentclass[ngerman]{dtk}
+\ifluatex\else
+\usepackage[utf8]{inputenc}
+%\usepackage[latin9]{inputenc}
+\fi
+\usepackage{siunitx}
+%\usepackage{etoolbox}
+%\usepackage{keyval}
+\usepackage{cleveref}
+
+
+
+
+%----------------------
+\newcommand{\catalogueentry}[1]{%
+\begingroup\RaggedRight 
+\setkeys{entrydetails}{#1}%
+\ifdef{\KVhouse}{\section{\KVhouse
+			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
+			}{}%
+\begin{labeling}{Beschreibung}
+%	\footnotesize %
+%	\setlength{\itemsep}{0pt}%
+%    \setlength{\parskip}{0pt}%
+%    \setlength{\parsep}{0pt}%
+\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
+\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
+\ifdef{\KVinterior}{%
+	\item[Ausstattung] \KVinterior %
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+	\begin{labeling}{Wandgemälde}
+%		\setlength{\itemsep}{0pt}%
+%    		\setlength{\parskip}{0pt}%
+%    		\setlength{\parsep}{0pt}%
+			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+		}{}}%
+	{%
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+		\item[Ausstattung]%
+	\begin{labeling}{Wandgemälde}	
+%			\setlength{\itemsep}{0pt}
+%	 		\setlength{\parskip}{0pt}%
+%    			\setlength{\parsep}{0pt}%
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+	}{}}%
+\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
+\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
+\end{labeling}
+\endgroup
+}
+
+\makeatletter
+\newbool{@KVinteriorM}%Mosaik
+\newbool{@KVinteriorW}%Wandgemälde
+\newbool{@KVinteriorS}%Statue
+\define@key{entrydetails}{house}{\def\KVhouse{#1}}
+\define@key{entrydetails}{label}{\def\KVlabel{#1}}
+\define@key{entrydetails}{description}{\def\KVdescription{#1}}
+\define@key{entrydetails}{location}{\def\KVlocation{#1}}
+\define@key{entrydetails}{size}{\def\KVsize{#1}}
+\define@key{entrydetails}{interior}{\def\KVinterior{#1}}%Innenausstattung
+\define@key{entrydetails}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
+\define@key{entrydetails}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
+\define@key{entrydetails}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
+\define@key{entrydetails}{literature}{\def\KVliterature{#1}}
+\makeatother
+
+
+\begin{document}
+\title{Integration von Python in \LaTeX\ am Beispiel von Katalogeinträgen}
+\Author{Uwe}{Ziegenhagen}{}
+\Author{Lukas C.}{Bossert}%
+			{Cranachstr.~24\\
+			12157 Berlin\\
+			\Email{lukas@digitales-altertum.de}}
+\maketitle
+
+
+
+Viele Dissertationen in der Archäologie enthalten am Ende einen Katalog, 
+in dem die untersuchten Daten in einem bestimmten System aufgeschlüsselt präsentiert werden.
+Dies können Bilder, Bohrproben oder Architekturen sein.
+
+\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+
+Kat. \ref{haus:M-Fabius-Rufus}
+
+
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	interiorM={S/W-Mosaik},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
+	interiorS={Bronzene Statue eines Epheben},
+}
+\end{lstlisting}
+
+
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	interiorM={S/W-Mosaik},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
+	interiorS={Bronzene Statue eines Epheben},
+}
+\newpage
+Weiteres Beispiel mit teilweiser Innenausstattung:
+
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={haus:Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+	interiorM={S/W-Mosaik},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+}
+\end{lstlisting}
+
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={haus:Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+	interiorM={S/W-Mosaik},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+}
+
+
+\newpage
+Notwendige Pakete
+\begin{lstlisting}[style=noNumber]
+\usepackage{etoolbox}
+\usepackage{keyval}
+\usepackage{cleveref}
+\usepackage{siunitx}
+\end{lstlisting}
+
+\begin{lstlisting}[style=number]
+\newcommand{\catalogueentry}[1]{%
+\begingroup\RaggedRight 
+\setkeys{entrydetails}{#1}%
+\ifdef{\KVhouse}{\section{\KVhouse
+			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
+			}{}%
+\begin{labeling}{Beschreibung}
+\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
+\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
+\ifdef{\KVinterior}{%
+	\item[Ausstattung] \KVinterior %
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+	\begin{labeling}{Wandgemälde}
+			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+		}{}}%
+	{%
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+		\item[Ausstattung]%
+	\begin{labeling}{Wandgemälde}	
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+	}{}}%
+\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
+\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
+\end{labeling}
+\endgroup
+}
+
+\makeatletter
+\newbool{@KVinteriorM}%Mosaik
+\newbool{@KVinteriorW}%Wandgemälde
+\newbool{@KVinteriorS}%Statue
+\define@key{entrydetails}{house}{\def\KVhouse{#1}}
+\define@key{entrydetails}{label}{\def\KVlabel{#1}}
+\define@key{entrydetails}{description}{\def\KVdescription{#1}}
+\define@key{entrydetails}{location}{\def\KVlocation{#1}}
+\define@key{entrydetails}{size}{\def\KVsize{#1}}
+\define@key{entrydetails}{interior}{\def\KVinterior{#1}}%Innenausstattung
+\define@key{entrydetails}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
+\define@key{entrydetails}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
+\define@key{entrydetails}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
+\define@key{entrydetails}{literature}{\def\KVliterature{#1}}
+\makeatother
+\end{lstlisting}
+
+\end{document}
