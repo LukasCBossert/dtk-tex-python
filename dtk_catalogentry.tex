@@ -87,9 +87,30 @@ Viele Dissertationen in der Archäologie enthalten am Ende einen Katalog,
 in dem die untersuchten Daten in einem bestimmten System aufgeschlüsselt präsentiert werden.
 Dies können Bilder, Bohrproben oder Architekturen sein.
 
-\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+Eine händische Erstellubg über section oder subsection und bspw mehreren items ist weder effizent und nur bei wenigen Einträgen einsetzbar.
+Es muss zudem berücksichtigt werden, dass nicht auf alle katalogeinträge alle vorgegebne Kategorien passwn, sodass ggf. Kategorien leer bleiben würden und dann im Katalogeintrag nicht auftauchen sollen.
+Darüberhinaus sollen alle Einträge immer gleich formatiert sein und ihr aussehen global verändert werden können.
+
+Ein Katalogeintrag soll alle Seitenzahlen enthalten, auf denen der Katalogeintrag im Haupttext erwähnt wurde.
+Für diese Anforderung erinnerte ich (Lukas) mich an einen Beitrag, den Uwe Ziegenhagen in dtk 1/2015 vorgestellt hat. 
+Darin ging es jedoch leider nur darum lediglich eine Erwähnung aus dem Haupttext im Katalogeintrag anzugeben.
+
+Meine Anfrage bei Uwe hat ergeben, dass die in dtk 1/2015 beschriebene vorgehendweise nur eine seitenzahl ausgeben kann.
+Allerdings schlug er vor mittels Python das Problem zu lösen und alle Seitenzahlen zusammenfassend im jeweiligen katalogeintrag ausgeben zu können.
+
+Um gemeinsam an dem hybriden Konstrukt von LaTeX und Python wurde die Plattform github ausgewählt, die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versuonskontrolle bereithält.
+
+
+\subsection{Katalogeintrag}
+
+
+
+Eine Lösung bietet ...\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
 
 Kat. \ref{haus:M-Fabius-Rufus}
+
+
+
 
 
 \begin{lstlisting}[style=number]
@@ -204,4 +225,9 @@ Notwendige Pakete
 \makeatother
 \end{lstlisting}
 
+
+
+\subsection{python}
+
+\subsection{Integration}
 \end{document}
