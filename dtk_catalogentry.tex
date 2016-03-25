@@ -13,8 +13,8 @@
 
 %----------------------
 \newcommand{\catalogueentry}[1]{%
-\begingroup\RaggedRight 
-\setkeys{entrydetails}{#1}%
+\RaggedRight 
+\setkeys{catalogue}{#1}%
 \ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
 			}{}%
@@ -52,23 +52,22 @@
 \ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
 \ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
 \end{labeling}
-\endgroup
 }
 
 \makeatletter
 \newbool{@KVinteriorM}%Mosaik
 \newbool{@KVinteriorW}%Wandgemälde
 \newbool{@KVinteriorS}%Statue
-\define@key{entrydetails}{house}{\def\KVhouse{#1}}
-\define@key{entrydetails}{label}{\def\KVlabel{#1}}
-\define@key{entrydetails}{description}{\def\KVdescription{#1}}
-\define@key{entrydetails}{location}{\def\KVlocation{#1}}
-\define@key{entrydetails}{size}{\def\KVsize{#1}}
-\define@key{entrydetails}{interior}{\def\KVinterior{#1}}%Innenausstattung
-\define@key{entrydetails}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
-\define@key{entrydetails}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
-\define@key{entrydetails}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{entrydetails}{literature}{\def\KVliterature{#1}}
+\define@key{catalogue}{house}{\def\KVhouse{#1}}
+\define@key{catalogue}{label}{\def\KVlabel{#1}}
+\define@key{catalogue}{description}{\def\KVdescription{#1}}
+\define@key{catalogue}{location}{\def\KVlocation{#1}}
+\define@key{catalogue}{size}{\def\KVsize{#1}}
+\define@key{catalogue}{interior}{\def\KVinterior{#1}}%Innenausstattung
+\define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
+\define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
+\define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
+\define@key{catalogue}{literature}{\def\KVliterature{#1}}
 \makeatother
 
 
@@ -83,34 +82,107 @@
 
 
 
-Viele Dissertationen in der Archäologie enthalten am Ende einen Katalog, 
+Viele Dissertationen in der Archäologie enthalten am Ende der Arbeit einen Katalog, 
 in dem die untersuchten Daten in einem bestimmten System aufgeschlüsselt präsentiert werden.
-Dies können Bilder, Bohrproben oder Architekturen sein.
+Ein solcher Katalog kann aus  Bildern, Bohrproben, Architekturen etc. bestehen.
 
-Eine händische Erstellubg über section oder subsection und bspw mehreren items ist weder effizent und nur bei wenigen Einträgen einsetzbar.
-Es muss zudem berücksichtigt werden, dass nicht auf alle katalogeinträge alle vorgegebne Kategorien passwn, sodass ggf. Kategorien leer bleiben würden und dann im Katalogeintrag nicht auftauchen sollen.
-Darüberhinaus sollen alle Einträge immer gleich formatiert sein und ihr aussehen global verändert werden können.
+Eine händische Erstellung der einzelnen Einträge bspw. über \Macro{section} oder \Macro{subsection} 
+und anschließend in einer \Environment{items}-Umgebung ist nicht effizent, fehleranfällig und nur bei wenigen Katalogeinträgen einsetzbar.
+Es muss zudem berücksichtigt werden, dass nicht auf alle Katalogeinträge alle vorgegebene Kategorien passen, 
+sodass  Kategorien leer bleiben  und dann im Katalogeintrag nicht auftauchen sollen.
+Dabei soll der Code möglichst viel redundante Tipp-Arbeit abnehmen,
+wie sie bspw. bei Maßeinheiten vorkommt.
+Darüberhinaus sollen alle Einträge immer gleich formatiert sein und ihr Aussehen global verändert werden können.
 
-Ein Katalogeintrag soll alle Seitenzahlen enthalten, auf denen der Katalogeintrag im Haupttext erwähnt wurde.
-Für diese Anforderung erinnerte ich (Lukas) mich an einen Beitrag, den Uwe Ziegenhagen in dtk 1/2015 vorgestellt hat. 
-Darin ging es jedoch leider nur darum lediglich eine Erwähnung aus dem Haupttext im Katalogeintrag anzugeben.
+Nachdem  eine  Lösung gefunden wurde, die allen bisher genannten Anforderungen entspricht (siehe unten),
+sollte in einer Kategorie alle Seitenzahlen enthalten, auf denen der Katalogeintrag im Haupttext erwähnt wurde.
+Ein  Lösungsansatz sah die Nutzung von  \Package{glossaries} vor: 
+Dafür musste allerdings für jeden Katalogeintrag ein eigenes Glossar angelegt werden, was nicht nur viel händische Arbeit bedeutet,
+sondern auch die Zählerkapazitäten von \TeX überforderten.
 
-Meine Anfrage bei Uwe hat ergeben, dass die in dtk 1/2015 beschriebene vorgehendweise nur eine seitenzahl ausgeben kann.
-Allerdings schlug er vor mittels Python das Problem zu lösen und alle Seitenzahlen zusammenfassend im jeweiligen katalogeintrag ausgeben zu können.
+Es musste also eine andere Lösung her und ich (Lukas) erinnerte mich an einen Beitrag, den Uwe Ziegenhagen in dtk 1/2015 vorgestellt hatte:
+Damals ging es darum, bei einem Werkkatalog die Erwähnung des Stückes im Haupttext anzugeben. 
+Prima, genau das, was ich gesucht habe und ich fand den damals verwendeten Code auf seiner Webseite.\footnote{\url{http://uweziegenhagen.de/?p=3020}}
+Allerdings  sah ich nun, dass die Aufgabe  damals darin bestand, nur \emph{eine} Erwähnung im dem Haupttext anzugeben,
+was mit \Command{label} und \Command{ref{}} bewerkstelligt werden konnte.
+Ich brauche jedoch alle Erwähnungen im Haupttext.
+Meine Emailanfrage bei Uwe nach einer Möglichkeit mehr als nur eine Erwähnung anzeigen zu lassen,
+beantwortete er mit dem Vorschlag mittels Python das Problem zu lösen.
 
-Um gemeinsam an dem hybriden Konstrukt von LaTeX und Python wurde die Plattform github ausgewählt, die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versuonskontrolle bereithält.
+Um gemeinsam an dem hybriden Konstrukt von LaTeX und Python wurde ein Repository auf der Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
+die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle bereithält,
+sodass sich kollaboriertes Arbeiten  sehr gut konzipieren lässt. 
 
 
 \subsection{Katalogeintrag}
+Die gewählte Lösung für die Katalogeinträge arbeitet mit dem \Package{keyval}.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+Dafür werden in der Präambel verschiedene \Command{keys} definiert.
+In der Grundversion sieht ein Eintrag wie folgt aus:\footnote{Vgl. \url{http://www.tug.org/tugboat/tb30-1/tb94wright-keyval.pdf}}
+\begin{lstlisting}[style=noNumber]
+\define@key{family}{key}{#1}
+\end{lstlisting}
+
+Für das konkrete Beispiel wird die \Command{key}-Familie (\Command{family}) mit \Command{catalogue} angegeben,
+der Schlüssel (Kategorie im Katalog) als \Command{house} bezeichnet und als Resultat soll der Wert im Makro \Macro{KVhouse} gespeichert werden:
+\begin{lstlisting}[style=noNumber]
+\define@key{catalogue}{house}{\def\KVhouse{#1}}
+\end{lstlisting}
+Entsprechend dieses Beispiels können alle Kategorien als Schlüssel angelegt werden:
+\begin{lstlisting}[style=number]
+\makeatletter
+\define@key{catalogue}{house}{\def\KVhouse{#1}}
+\define@key{catalogue}{label}{\def\KVlabel{#1}}
+\define@key{catalogue}{description}{\def\KVdescription{#1}}
+\define@key{catalogue}{location}{\def\KVlocation{#1}}
+\define@key{catalogue}{size}{\def\KVsize{#1}}
+\define@key{catalogue}{interior}{\def\KVinterior{#1}}
+\define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}}
+\define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}}
+\define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}}
+\define@key{catalogue}{literature}{\def\KVliterature{#1}}
+\makeatother
+\end{lstlisting}
+Das Aussehen eines Katalogeintrages wird separat in einem \Macro{newcommand} definiert.
+\begin{lstlisting}[style=number]
+\newcommand{\catalogueentry}[1]{%
+\RaggedRight 
+\setkeys{catalogue}{#1}
+\end{lstlisting}
 
 
-
-Eine Lösung bietet ...\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
-
-Kat. \ref{haus:M-Fabius-Rufus}
-
-
-
+\begin{lstlisting}[style=number]
+\newcommand{\catalogueentry}[1]{%
+\RaggedRight 
+\setkeys{catalogue}{#1}%
+\ifdef{\KVhouse}{\section{\KVhouse
+			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
+			}{}%
+\begin{labeling}{Beschreibung}
+\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
+\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
+\ifdef{\KVinterior}{%
+	\item[Ausstattung] \KVinterior %
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+	\begin{labeling}{Wandgemälde}
+			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+		}{}}%
+	{%
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+		\item[Ausstattung]%
+	\begin{labeling}{Wandgemälde}	
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+	}{}}%
+\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
+\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
+\end{labeling}
+}
+\end{lstlisting}
 
 
 \begin{lstlisting}[style=number]
@@ -141,6 +213,15 @@ Kat. \ref{haus:M-Fabius-Rufus}
 }
 \newpage
 Weiteres Beispiel mit teilweiser Innenausstattung:
+
+
+
+
+
+
+
+
+
 
 \begin{lstlisting}[style=number]
 \catalogueentry{%
@@ -177,7 +258,7 @@ Notwendige Pakete
 \begin{lstlisting}[style=number]
 \newcommand{\catalogueentry}[1]{%
 \begingroup\RaggedRight 
-\setkeys{entrydetails}{#1}%
+\setkeys{catalogue}{#1}%
 \ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
 			}{}%
@@ -208,21 +289,7 @@ Notwendige Pakete
 \endgroup
 }
 
-\makeatletter
-\newbool{@KVinteriorM}%Mosaik
-\newbool{@KVinteriorW}%Wandgemälde
-\newbool{@KVinteriorS}%Statue
-\define@key{entrydetails}{house}{\def\KVhouse{#1}}
-\define@key{entrydetails}{label}{\def\KVlabel{#1}}
-\define@key{entrydetails}{description}{\def\KVdescription{#1}}
-\define@key{entrydetails}{location}{\def\KVlocation{#1}}
-\define@key{entrydetails}{size}{\def\KVsize{#1}}
-\define@key{entrydetails}{interior}{\def\KVinterior{#1}}%Innenausstattung
-\define@key{entrydetails}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
-\define@key{entrydetails}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
-\define@key{entrydetails}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{entrydetails}{literature}{\def\KVliterature{#1}}
-\makeatother
+
 \end{lstlisting}
 
 
@@ -230,4 +297,8 @@ Notwendige Pakete
 \subsection{python}
 
 \subsection{Integration}
+
+
+
+%%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
