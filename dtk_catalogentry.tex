@@ -12,8 +12,8 @@
 
 
 %----------------------
-\newcommand{\catalogueentry}[1]{%
-\RaggedRight 
+\newcommand\catalogueentry[1]{%
+\RaggedRight\begingroup
 \setkeys{catalogue}{#1}%
 \ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
@@ -52,6 +52,7 @@
 \ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
 \ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
 \end{labeling}
+\endgroup
 }
 
 \makeatletter
@@ -144,159 +145,139 @@ Entsprechend dieses Beispiels können alle Kategorien als Schlüssel angelegt we
 \end{lstlisting}
 Das Aussehen eines Katalogeintrages wird separat in einem \Macro{newcommand} definiert.
 \begin{lstlisting}[style=number]
-\newcommand{\catalogueentry}[1]{%
-\RaggedRight 
+\newcommand\catalogueentry[1]{%
+\RaggedRight\begingroup
 \setkeys{catalogue}{#1}
 \end{lstlisting}
-
+In der Definition des Befehls \Macro{catalogueentry} wird festgelegt,
+dass die Einträge nicht nur im Flattersatz ausgegeben,
+sondern auch, dass hierfür die Einträge aus der \Command{key}-Familie \Command{catalogue} ausgelesen werden.
+Es folgt in der Defintion die Verarbeitung der einzelnen \Command{keys}:
 
 \begin{lstlisting}[style=number]
-\newcommand{\catalogueentry}[1]{%
-\RaggedRight 
-\setkeys{catalogue}{#1}%
 \ifdef{\KVhouse}{\section{\KVhouse
-			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
-			}{}%
+			\ifdef{\KVlabel}{\label{\KVlabel}}{}}}{}
 \begin{labeling}{Beschreibung}
-\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
-\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
+\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}
+\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}
 \ifdef{\KVinterior}{%
-	\item[Ausstattung] \KVinterior %
-	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+	\item[Ausstattung] \KVinterior
 	\begin{labeling}{Wandgemälde}
 			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
 			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
 			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
 			\end{labeling}
-		}{}}%
-	{%
-	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
-		\item[Ausstattung]%
-	\begin{labeling}{Wandgemälde}	
-				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
-			\end{labeling}
-	}{}}%
-\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
-\end{labeling}
-}
-\end{lstlisting}
-
-
-\begin{lstlisting}[style=number]
-\catalogueentry{%
-	house={Haus des M. Fabius Rufus},
-	label={haus:M-Fabius-Rufus},
-	size={172},
-	description={Haus besteht aus mehreren Einzelgebäuden.},
-	location={Regio VII, Insula 16, Eingang 17--22.},
-	interior={Reicher Fundkomplex.},
-	interiorM={S/W-Mosaik},
-	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
-	interiorS={Bronzene Statue eines Epheben},
-}
-\end{lstlisting}
-
-
-\catalogueentry{%
-	house={Haus des M. Fabius Rufus},
-	label={haus:M-Fabius-Rufus},
-	size={172},
-	description={Haus besteht aus mehreren Einzelgebäuden.},
-	location={Regio VII, Insula 16, Eingang 17--22.},
-	interior={Reicher Fundkomplex.},
-	interiorM={S/W-Mosaik},
-	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
-	interiorS={Bronzene Statue eines Epheben},
-}
-\newpage
-Weiteres Beispiel mit teilweiser Innenausstattung:
-
-
-
-
-
-
-
-
-
-
-\begin{lstlisting}[style=number]
-\catalogueentry{%
-	house={Haus des Wilden Ebers},
-	label={haus:Wilden-Ebers},
-	size={54},
-	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
-	interiorM={S/W-Mosaik},
-	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
-}
-\end{lstlisting}
-
-\catalogueentry{%
-	house={Haus des Wilden Ebers},
-	label={haus:Wilden-Ebers},
-	size={54},
-	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
-	interiorM={S/W-Mosaik},
-	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
-}
-
-
-\newpage
-Notwendige Pakete
-\begin{lstlisting}[style=noNumber]
-\usepackage{etoolbox}
-\usepackage{keyval}
-\usepackage{cleveref}
-\usepackage{siunitx}
-\end{lstlisting}
-
-\begin{lstlisting}[style=number]
-\newcommand{\catalogueentry}[1]{%
-\begingroup\RaggedRight 
-\setkeys{catalogue}{#1}%
-\ifdef{\KVhouse}{\section{\KVhouse
-			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
-			}{}%
-\begin{labeling}{Beschreibung}
-\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
-\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
-\ifdef{\KVinterior}{%
-	\item[Ausstattung] \KVinterior %
-	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
-	\begin{labeling}{Wandgemälde}
-			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
-			\end{labeling}
-		}{}}%
-	{%
-	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
-		\item[Ausstattung]%
-	\begin{labeling}{Wandgemälde}	
-				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
-			\end{labeling}
-	}{}}%
-\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
+		}{}
+\ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}
+\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
 \end{labeling}
 \endgroup
 }
-
-
 \end{lstlisting}
 
+Mit dieser Einstellung lassen sich die Katalogeinträge schon sehr gut darstellen.
+So wird aus den folgenden Angaben 
+
+\begin{lstlisting}[style=noNumber]
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	interiorM={S/W-Mosaik},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
+	interiorS={Bronzene Statue eines Epheben},
+}
+\end{lstlisting}
+ein Katalogeintrag, der so aussieht:
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	interiorM={S/W-Mosaik},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
+	interiorS={Bronzene Statue eines Epheben},
+}
+Wie man sieht, ist die Reihenfolge in der die \Command{keys} angegeben werden irrelevant. 
+Der Wert bei \Command{size} wird intern sogleich an das vordefinierte \Macro{SI}-Makro mit entsprechender Einheit (\si{\meter\squared}) übergeben.
+Ähnlich kann auch mit anderen Angaben verfahren werden (bspw. mehrere \Macro{label} an \Macro{cref}, etc.).
+
+Bei diesem Eintrag sind alle Kategorien ausgefüllt. 
+Wenn eine Kategorie nicht ausgefüllt ist, wird sie nicht ausgegeben.
+Allerdings besteht die Kategorie \Command{interior} [Ausstattung]  zusätzlich aus drei Unterkategorien 
+(\Command{interiorM} [Mosaike], \Command{interiorW} [Wandgemälde], \Command{interiorS} [Statuen]).
+Diese sollen angezeigt werden auch wenn \Command{interior} selbst nicht definiert ist.
+
+\begin{lstlisting}[style=noNumber]
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={haus:Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+	interiorM={S/W-Mosaik},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+}
+\end{lstlisting}
+So wird daraus:
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={haus:Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+	interiorM={S/W-Mosaik},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+}
+
+Um zu diesem Ergebnis zu kommen, 
+ist es notwendig mit Booleschen Operatoren zu arbeiten.
+Dafür müssen bei den \Command{key}-Definitionen drei Operatoren eingeführt werden:
+\begin{lstlisting}[style=number]
+\newbool{@KVinteriorM}%Mosaik
+\newbool{@KVinteriorW}%Wandgemälde
+\newbool{@KVinteriorS}%Statue
+...
+\define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
+\define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
+\define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
+\end{lstlisting}
+
+Diese können dann bei der Ausgabe der Katalogeinträge eingesetzt werden.
+\begin{lstlisting}[style=number]
+\ifdef{\KVinterior}{%
+	\item[Ausstattung] \KVinterior 
+	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+	\begin{labeling}{Wandgemälde}
+			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+		}{}}
+	{\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+		\item[Ausstattung]%
+	\begin{labeling}{Wandgemälde}	
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\end{labeling}
+	}{}}
+\end{lstlisting}
+Dadurch werden die Unterkategorien von \Command{interior} ausgegeben, 
+auch wenn \Command{interior} selbst nicht definiert ist.
 
 
-\subsection{python}
+Was fehlt ist die Ausgabe der Seitenzahlen, wofür der \Command{literature} bereit gestellt wird.
 
-\subsection{Integration}
+
+\section{python}
+
+\section{Integration }
 
 
 
