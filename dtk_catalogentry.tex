@@ -7,10 +7,6 @@
 %\usepackage{etoolbox}
 %\usepackage{keyval}
 \usepackage{cleveref}
-
-
-
-
 %----------------------
 \newcommand\catalogueentry[1]{%
 \RaggedRight\begingroup
@@ -73,7 +69,7 @@
 
 
 \begin{document}
-\title{Integration von Python in \LaTeX\ am Beispiel von Katalogeinträgen}
+\title{Integration von Python in \XeLaTeX\ am Beispiel von Katalogeinträgen}
 \Author{Uwe}{Ziegenhagen}{}
 \Author{Lukas C.}{Bossert}%
 			{Cranachstr.~24\\
@@ -93,7 +89,7 @@ Es muss zudem berücksichtigt werden, dass nicht auf alle Katalogeinträge alle 
 sodass  Kategorien leer bleiben  und dann im Katalogeintrag nicht auftauchen sollen.
 Dabei soll der Code möglichst viel redundante Tipp-Arbeit abnehmen,
 wie sie bspw. bei Maßeinheiten vorkommt.
-Darüberhinaus sollen alle Einträge immer gleich formatiert sein und ihr Aussehen global verändert werden können.
+Darüber hinaus sollen alle Einträge immer gleich formatiert sein und ihr Aussehen global verändert werden können.
 
 Nachdem  eine  Lösung gefunden wurde, die allen bisher genannten Anforderungen entspricht (siehe unten),
 sollte in einer Kategorie alle Seitenzahlen enthalten, auf denen der Katalogeintrag im Haupttext erwähnt wurde.
@@ -110,21 +106,26 @@ Ich brauche jedoch alle Erwähnungen im Haupttext.
 Meine Emailanfrage bei Uwe nach einer Möglichkeit mehr als nur eine Erwähnung anzeigen zu lassen,
 beantwortete er mit dem Vorschlag mittels Python das Problem zu lösen.
 
-Um gemeinsam an dem hybriden Konstrukt von LaTeX und Python wurde ein Repository auf der Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
+Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX und Python wurde ein Repository auf der Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
 die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle bereithält,
 sodass sich kollaboriertes Arbeiten  sehr gut konzipieren lässt. 
 
 
 \subsection{Katalogeintrag}
-Die gewählte Lösung für die Katalogeinträge arbeitet mit dem \Package{keyval}.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
-Dafür werden in der Präambel verschiedene \Command{keys} definiert.
-In der Grundversion sieht ein Eintrag wie folgt aus:\footnote{Vgl. \url{http://www.tug.org/tugboat/tb30-1/tb94wright-keyval.pdf}}
+Als Aufgabe soll ein Katalog zu den Häusern in Pompeji angelegt werden,
+der Auskunft über den Namen des Hauses, dessen Verortung und Grundstücksgröße  geben.
+Zudem soll eine kurze Beschreibung enthalten sein und die Angabe über die Innenausstattung, die wiederum aufgeschlüsselt werden kann auf die Untergruppen Mosaik, Wandgemälde und Skulptur. 
+Zum Schluss soll im Katalogeintrag angezeigt werden auf welchen Seiten des Fließtextes das Haus genannt wird.
+
+Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit dem Paket \Package{keyval}.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+Dafür werden in der Präambel verschiedene Schlüssel (\Command{keys}) definiert.
+In der Grundversion sieht die Definition eines Eintrages wie folgt aus:\footnote{Vgl. \url{http://www.tug.org/tugboat/tb30-1/tb94wright-keyval.pdf}}
 \begin{lstlisting}[style=noNumber]
 \define@key{family}{key}{#1}
 \end{lstlisting}
-
 Für das konkrete Beispiel wird die \Command{key}-Familie (\Command{family}) mit \Command{catalogue} angegeben,
-der Schlüssel (Kategorie im Katalog) als \Command{house} bezeichnet und als Resultat soll der Wert im Makro \Macro{KVhouse} gespeichert werden:
+der Schlüssel (\Command{key}), was einer Kategorie im Katalog entspricht, 
+als \Command{house} bezeichnet und als Resultat soll der Wert im Makro \Macro{KVhouse} gespeichert werden:
 \begin{lstlisting}[style=noNumber]
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
 \end{lstlisting}
@@ -143,39 +144,53 @@ Entsprechend dieses Beispiels können alle Kategorien als Schlüssel angelegt we
 \define@key{catalogue}{literature}{\def\KVliterature{#1}}
 \makeatother
 \end{lstlisting}
-Das Aussehen eines Katalogeintrages wird separat in einem \Macro{newcommand} definiert.
+Das Aussehen eines Katalogeintrages wird separat mit dem Makro
+ \Macro{newcommand}\Macro{catalogueentry}[1]{\ldots} 
+definiert:
+Darin wird zunächst festgelegt,
+dass eine neue Gruppe beginnt (\Macro{begingroup}), sodass
+es zu keinen Problemen mit den jeweils definierten Schlüsseln kommt, 
+da diese für jeden Katalogeintrag neu definiert werden.
+Dann sollen die  Einträge im Flattersatz gesetzt werden (\Macro{RaggedRight}) und schließlich die Angabe welche
+Schlüsselfamilie (hier \Command{catalogue}) auszulesen ist.
 \begin{lstlisting}[style=number]
 \newcommand\catalogueentry[1]{%
-\RaggedRight\begingroup
+\begingroup
+\RaggedRight
 \setkeys{catalogue}{#1}
+...
 \end{lstlisting}
-In der Definition des Befehls \Macro{catalogueentry} wird festgelegt,
-dass die Einträge nicht nur im Flattersatz ausgegeben,
-sondern auch, dass hierfür die Einträge aus der \Command{key}-Familie \Command{catalogue} ausgelesen werden.
-Es folgt in der Defintion die Verarbeitung der einzelnen \Command{keys}:
 
+Es folgt in der Definition die Verarbeitung der einzelnen Schlüssel:
+Da nur die Ausgabe einer Kategorie erfolgen soll,
+wenn diese auch mit Informationen versehen ist,
+wird dies über die Abfrage \Macro{ifdef} erledigt.
+Der Inhalt der Kategorie \Command{house} wird als \Macro{section}-Titel verwendet und, wenn vorhanden, mit einem \Macro{label} versehen.
+Die weiteren Kategorien sollen in einer \Environment{labeling}-Umgebung aufgelistet werden.
+Die Definition wird mit \Macro{endgroup} geschlossen.
 \begin{lstlisting}[style=number]
+...
 \ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}}{}
 \begin{labeling}{Beschreibung}
-\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}
-\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}
-\ifdef{\KVinterior}{%
-	\item[Ausstattung] \KVinterior
-	\begin{labeling}{Wandgemälde}
-			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+	\ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}
+	\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}
+	\ifdef{\KVinterior}{\item[Ausstattung] \KVinterior
+			\begin{labeling}{Wandgemälde}
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
 			\end{labeling}
-		}{}
-\ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}
-\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
+			}{}
+	\ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}
+	\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
 \end{labeling}
 \endgroup
 }
 \end{lstlisting}
 
 Mit dieser Einstellung lassen sich die Katalogeinträge schon sehr gut darstellen.
+Im Fließtext des Hauptdokuments kann man an gewünschter Stelle mit \Macro{catalogueentry} einen Katalogeintrag eintragen.
 So wird aus den folgenden Angaben 
 
 \begin{lstlisting}[style=noNumber]
@@ -203,16 +218,19 @@ ein Katalogeintrag, der so aussieht:
 	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
 	interiorS={Bronzene Statue eines Epheben},
 }
-Wie man sieht, ist die Reihenfolge in der die \Command{keys} angegeben werden irrelevant. 
+Wie man bei diesem Beispiel sieht, ist die Reihenfolge, in der die Kategorien
+ angegeben werden, irrelevant, da die Definition in der Präambel entscheidend ist.
 Der Wert bei \Command{size} wird intern sogleich an das vordefinierte \Macro{SI}-Makro mit entsprechender Einheit (\si{\meter\squared}) übergeben.
-Ähnlich kann auch mit anderen Angaben verfahren werden (bspw. mehrere \Macro{label} an \Macro{cref}, etc.).
+Ähnlich kann auch mit anderen Angaben verfahren werden (bspw. bei Abbildungen können die \Macro{label} an ein vordefiniertes Macro \Macro{cref} übergeben werden).
 
-Bei diesem Eintrag sind alle Kategorien ausgefüllt. 
+Bei dem oben beschriebenen Katalogeintrag zum 
+›Haus des M.~Fabius Rufus‹ sind alle Kategorien ausgefüllt. 
 Wenn eine Kategorie nicht ausgefüllt ist, wird sie nicht ausgegeben.
 Allerdings besteht die Kategorie \Command{interior} [Ausstattung]  zusätzlich aus drei Unterkategorien 
 (\Command{interiorM} [Mosaike], \Command{interiorW} [Wandgemälde], \Command{interiorS} [Statuen]).
 Diese sollen angezeigt werden auch wenn \Command{interior} selbst nicht definiert ist.
 
+Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt:
 \begin{lstlisting}[style=noNumber]
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
@@ -234,32 +252,40 @@ So wird daraus:
 	interiorM={S/W-Mosaik},
 	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
 }
-
 Um zu diesem Ergebnis zu kommen, 
-ist es notwendig mit Booleschen Operatoren zu arbeiten.
+ist es notwendig, mit Booleschen Operatoren zu arbeiten.
 Dafür müssen bei den \Command{key}-Definitionen drei Operatoren eingeführt werden:
 \begin{lstlisting}[style=number]
 \newbool{@KVinteriorM}%Mosaik
 \newbool{@KVinteriorW}%Wandgemälde
 \newbool{@KVinteriorS}%Statue
-...
+\end{lstlisting}
+Diese Booleschen Operatoren werden bei der Definition der einzelnen Einträge eingebaut und als 
+\Command{true} gesetzt, wenn dieser Eintrag mit Informationen versehen wird.
+Konkret sieht die Modifikation so aus:
+ \begin{lstlisting}[style=number]
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
 \end{lstlisting}
 
-Diese können dann bei der Ausgabe der Katalogeinträge eingesetzt werden.
+Zudem müssen die Booleschen Operatoren bei der Ausgabe der Katalogeinträge eingesetzt werden,
+sodass geprüft wird (\Macro{ifboolexpr}), ob einer oder mehrere der Operatoren auf \Command{true} gesetzt ist.
 \begin{lstlisting}[style=number]
 \ifdef{\KVinterior}{%
 	\item[Ausstattung] \KVinterior 
-	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
-	\begin{labeling}{Wandgemälde}
-			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+	\ifboolexpr{bool{@KVinteriorM} 
+					or bool{@KVinteriorW} 
+					or bool{@KVinteriorS}}{%
+			\begin{labeling}{Wandgemälde}
+				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
 			\end{labeling}
-		}{}}
-	{\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
+			}{}}
+	{\ifboolexpr{bool{@KVinteriorM} 
+					or bool{@KVinteriorW} 
+					or bool{@KVinteriorS}}{%
 		\item[Ausstattung]%
 	\begin{labeling}{Wandgemälde}	
 				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
@@ -268,16 +294,16 @@ Diese können dann bei der Ausgabe der Katalogeinträge eingesetzt werden.
 			\end{labeling}
 	}{}}
 \end{lstlisting}
-Dadurch werden die Unterkategorien von \Command{interior} ausgegeben, 
+Mit dieser modifizierten Ergänzung der Katalogeintragsdefinition werden die Unterkategorien von \Command{interior} ausgegeben, 
 auch wenn \Command{interior} selbst nicht definiert ist.
 
 
-Was fehlt ist die Ausgabe der Seitenzahlen, wofür der \Command{literature} bereit gestellt wird.
+Was noch fehlt ist die Ausgabe der Seiten auf denen der Katalogeintrag
+ erwähnt wird, wofür der \Command{literature} bereit gestellt wird.
+Dafür wird der Umweg über, oder besser gesagt die Integration von Python gewählt.
+\section{Exkurs Python}
 
-
-\section{python}
-
-\section{Integration }
+\section{Integration}
 
 
 
