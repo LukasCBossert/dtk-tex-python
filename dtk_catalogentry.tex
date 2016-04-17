@@ -81,41 +81,44 @@
 
 Viele Dissertationen in der Archäologie enthalten am Ende der Arbeit einen Katalog, 
 in dem die untersuchten Daten in einem bestimmten System aufgeschlüsselt präsentiert werden.
-Ein solcher Katalog kann aus  Bildern, Bohrproben, Architekturen etc. bestehen.
+Ein solcher Katalog kann aus  Bildern, Bohrproben, Architekturelementen etc. bestehen.
 
 Eine händische Erstellung der einzelnen Einträge bspw. über \Macro{section} oder \Macro{subsection} 
 und anschließend in einer \Environment{items}-Umgebung ist nicht effizent, fehleranfällig und nur bei wenigen Katalogeinträgen einsetzbar.
-Es muss zudem berücksichtigt werden, dass nicht auf alle Katalogeinträge alle vorgegebene Kategorien passen, 
+Es muss zudem berücksichtigt werden, dass  dass die vorgegebenen Kategorien nicht für jeden Katalogeintrag passend sind, 
 sodass  Kategorien leer bleiben  und dann im Katalogeintrag nicht auftauchen sollen.
 Dabei soll der Code möglichst viel redundante Tipp-Arbeit abnehmen,
 wie sie bspw. bei Maßeinheiten vorkommt.
 Darüber hinaus sollen alle Einträge immer gleich formatiert sein und ihr Aussehen global verändert werden können.
 
 Nachdem  eine  Lösung gefunden wurde, die allen bisher genannten Anforderungen entspricht (siehe unten),
-sollte in einer Kategorie alle Seitenzahlen enthalten, auf denen der Katalogeintrag im Haupttext erwähnt wurde.
+sollten in einer Kategorie alle Seitenzahlen enthalten sein, auf denen im Haupttext auf den Katalogeintrag verwiesen wird.
 Ein  Lösungsansatz sah die Nutzung von  \Package{glossaries} vor: 
 Dafür musste allerdings für jeden Katalogeintrag ein eigenes Glossar angelegt werden, was nicht nur viel händische Arbeit bedeutet,
-sondern auch die Zählerkapazitäten von \TeX überforderten.
+sondern auch die Zählerkapazitäten von \TeX\ überforderten.
 
 Es musste also eine andere Lösung her und ich (Lukas) erinnerte mich an einen Beitrag, den Uwe Ziegenhagen in dtk 1/2015 vorgestellt hatte:
 Damals ging es darum, bei einem Werkkatalog die Erwähnung des Stückes im Haupttext anzugeben. 
 Prima, genau das, was ich gesucht habe und ich fand den damals verwendeten Code auf seiner Webseite.\footnote{\url{http://uweziegenhagen.de/?p=3020}}
-Allerdings  sah ich nun, dass die Aufgabe  damals darin bestand, nur \emph{eine} Erwähnung im dem Haupttext anzugeben,
+Allerdings  sah ich nun, dass die Aufgabe  damals darin bestand, nur \emph{eine} Erwähnung im  Haupttext anzugeben,
 was mit \Command{label} und \Command{ref{}} bewerkstelligt werden konnte.
 Ich brauche jedoch alle Erwähnungen im Haupttext.
 Meine Emailanfrage bei Uwe nach einer Möglichkeit mehr als nur eine Erwähnung anzeigen zu lassen,
-beantwortete er mit dem Vorschlag mittels Python das Problem zu lösen.
+beantwortete er mit dem Vorschlag, mittels Python das Problem zu lösen.
 
-Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX und Python wurde ein Repository auf der Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
+Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX und Python wurde ein Repository auf der 
+Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
 die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle bereithält,
 sodass sich kollaboriertes Arbeiten  sehr gut konzipieren lässt. 
 
 
 \subsection{Katalogeintrag}
 Als Aufgabe soll ein Katalog zu den Häusern in Pompeji angelegt werden,
-der Auskunft über den Namen des Hauses, dessen Verortung und Grundstücksgröße  geben.
-Zudem soll eine kurze Beschreibung enthalten sein und die Angabe über die Innenausstattung, die wiederum aufgeschlüsselt werden kann auf die Untergruppen Mosaik, Wandgemälde und Skulptur. 
-Zum Schluss soll im Katalogeintrag angezeigt werden auf welchen Seiten des Fließtextes das Haus genannt wird.
+der Auskunft über den Namen des Hauses, dessen Verortung und Grundstücksgröße  geben soll.
+Zudem soll eine kurze Beschreibung enthalten sein und die Angabe über die Innenausstattung, 
+die wiederum aufgeschlüsselt werden kann auf die Untergruppen Mosaik, Wandgemälde und Skulptur. 
+Zum Schluss soll im Katalogeintrag angezeigt werden, 
+auf welchen Seiten des Fließtextes das Haus genannt wird.
 
 Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit dem Paket \Package{keyval}.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
 Dafür werden in der Präambel verschiedene Schlüssel (\Command{keys}) definiert.
@@ -129,7 +132,7 @@ als \Command{house} bezeichnet und als Resultat soll der Wert im Makro \Macro{KV
 \begin{lstlisting}[style=noNumber]
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
 \end{lstlisting}
-Entsprechend dieses Beispiels können alle Kategorien als Schlüssel angelegt werden:
+Dem Beispiel entsprechend können alle Kategorien als Schlüssel angelegt werden:
 \begin{lstlisting}[style=number]
 \makeatletter
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
@@ -151,8 +154,8 @@ Darin wird zunächst festgelegt,
 dass eine neue Gruppe beginnt (\Macro{begingroup}), sodass
 es zu keinen Problemen mit den jeweils definierten Schlüsseln kommt, 
 da diese für jeden Katalogeintrag neu definiert werden.
-Dann sollen die  Einträge im Flattersatz gesetzt werden (\Macro{RaggedRight}) und schließlich die Angabe welche
-Schlüsselfamilie (hier \Command{catalogue}) auszulesen ist.
+Dann sollen die  Einträge im Flattersatz gesetzt werden (\Macro{RaggedRight}) und schließlich die Angabe,
+ welche Schlüsselfamilie (hier \Command{catalogue}) auszulesen ist.
 \begin{lstlisting}[style=number]
 \newcommand\catalogueentry[1]{%
 \begingroup
@@ -228,7 +231,7 @@ Bei dem oben beschriebenen Katalogeintrag zum
 Wenn eine Kategorie nicht ausgefüllt ist, wird sie nicht ausgegeben.
 Allerdings besteht die Kategorie \Command{interior} [Ausstattung]  zusätzlich aus drei Unterkategorien 
 (\Command{interiorM} [Mosaike], \Command{interiorW} [Wandgemälde], \Command{interiorS} [Statuen]).
-Diese sollen angezeigt werden auch wenn \Command{interior} selbst nicht definiert ist.
+Diese sollen auch dann angezeigt werden, wenn \Command{interior} selbst nicht definiert ist.
 
 Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt:
 \begin{lstlisting}[style=noNumber]
@@ -298,7 +301,7 @@ Mit dieser modifizierten Ergänzung der Katalogeintragsdefinition werden die Unt
 auch wenn \Command{interior} selbst nicht definiert ist.
 
 
-Was noch fehlt ist die Ausgabe der Seiten auf denen der Katalogeintrag
+Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
  erwähnt wird, wofür der \Command{literature} bereit gestellt wird.
 Dafür wird der Umweg über, oder besser gesagt die Integration von Python gewählt.
 \section{Exkurs Python}
