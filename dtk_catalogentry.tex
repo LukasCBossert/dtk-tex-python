@@ -4,9 +4,14 @@
 %\usepackage[latin9]{inputenc}
 \fi
 \usepackage{siunitx}
+\usepackage{framed}
+\usepackage{booktabs}
 %\usepackage{etoolbox}
 %\usepackage{keyval}
 \usepackage{cleveref}
+%----------------------
+\newenvironment{bsp}{\begin{framed}\begin{footnotesize}}%
+{\end{footnotesize}\end{framed}}
 %----------------------
 \newcommand\catalogueentry[1]{%
 \RaggedRight\begingroup
@@ -28,9 +33,9 @@
 %		\setlength{\itemsep}{0pt}%
 %    		\setlength{\parskip}{0pt}%
 %    		\setlength{\parsep}{0pt}%
-			\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-			\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-			\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+			\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
+			\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
+			\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
 			\end{labeling}
 		}{}}%
 	{%
@@ -40,13 +45,13 @@
 %			\setlength{\itemsep}{0pt}
 %	 		\setlength{\parskip}{0pt}%
 %    			\setlength{\parsep}{0pt}%
-				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+				\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
 			\end{labeling}
 	}{}}%
 \ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}%		
+\ifdef{\KVliterature}{\item[Erwähnungen]S.\ \KVliterature}{}%		
 \end{labeling}
 \endgroup
 }
@@ -64,9 +69,28 @@
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{catalogue}{literature}{\def\KVliterature{#1}}
-\makeatother
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}}}
+%\define@key{catalogue}{literature}{%
+%	\def\KVliterature{%
+%				\ifdef{#1}%
+%						{\ausgabe{#1}}
+%						{\ifdef{\KVlabel}%
+%							{\ausgabe{\KVlabel}}
+%							{}%
+%						}
+%			}
+%}
 
+\makeatother
+%----------------------python
+\makeatletter
+	\newwrite\myfile
+	\immediate\openout\myfile=\jobname.sti
+	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
+%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
+	\newcommand{\ausgabe}[2]{#2}
+	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
+\makeatother
 
 \begin{document}
 \title{Integration von Python in \XeLaTeX\ am Beispiel von Katalogeinträgen}
@@ -106,7 +130,7 @@ Ich brauche jedoch alle Erwähnungen im Haupttext.
 Meine Emailanfrage bei Uwe nach einer Möglichkeit mehr als nur eine Erwähnung anzeigen zu lassen,
 beantwortete er mit dem Vorschlag, mittels Python das Problem zu lösen.
 
-Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX und Python wurde ein Repository auf der 
+Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX\ und Python wurde ein Repository auf der 
 Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
 die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle bereithält,
 sodass sich kollaboriertes Arbeiten  sehr gut konzipieren lässt. 
@@ -144,7 +168,6 @@ Dem Beispiel entsprechend können alle Kategorien als Schlüssel angelegt werden
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}}
-\define@key{catalogue}{literature}{\def\KVliterature{#1}}
 \makeatother
 \end{lstlisting}
 Das Aussehen eines Katalogeintrages wird separat mit dem Makro
@@ -180,13 +203,12 @@ Die Definition wird mit \Macro{endgroup} geschlossen.
 	\ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}
 	\ifdef{\KVinterior}{\item[Ausstattung] \KVinterior
 			\begin{labeling}{Wandgemälde}
-				\ifdef{\KVinteriorM}{\item[Mosaike] \KVinteriorM}{}
-				\ifdef{\KVinteriorW}{\item[Wandgemälde] \KVinteriorW}{}
-				\ifdef{\KVinteriorS}{\item[Statuen] \KVinteriorS}{}
+				\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
+				\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
+				\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
 			\end{labeling}
 			}{}
 	\ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}
-	\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
 \end{labeling}
 \endgroup
 }
@@ -209,7 +231,8 @@ So wird aus den folgenden Angaben
 	interiorS={Bronzene Statue eines Epheben},
 }
 \end{lstlisting}
-ein Katalogeintrag, der so aussieht:
+ein Katalogeintrag, der so aussieht:\eintrag{Haus-Rufus}
+\begin{bsp}
 \catalogueentry{%
 	house={Haus des M. Fabius Rufus},
 	label={haus:M-Fabius-Rufus},
@@ -221,23 +244,25 @@ ein Katalogeintrag, der so aussieht:
 	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
 	interiorS={Bronzene Statue eines Epheben},
 }
+\end{bsp}
 Wie man bei diesem Beispiel sieht, ist die Reihenfolge, in der die Kategorien
  angegeben werden, irrelevant, da die Definition in der Präambel entscheidend ist.
 Der Wert bei \Command{size} wird intern sogleich an das vordefinierte \Macro{SI}-Makro mit entsprechender Einheit (\si{\meter\squared}) übergeben.
 Ähnlich kann auch mit anderen Angaben verfahren werden (bspw. bei Abbildungen können die \Macro{label} an ein vordefiniertes Macro \Macro{cref} übergeben werden).
 
 Bei dem oben beschriebenen Katalogeintrag zum 
-›Haus des M.~Fabius Rufus‹ sind alle Kategorien ausgefüllt. 
+›Haus des M.~Fabius Rufus‹ sind alle Kategorien ausgefüllt. \eintrag{Haus-Rufus}
 Wenn eine Kategorie nicht ausgefüllt ist, wird sie nicht ausgegeben.
 Allerdings besteht die Kategorie \Command{interior} [Ausstattung]  zusätzlich aus drei Unterkategorien 
 (\Command{interiorM} [Mosaike], \Command{interiorW} [Wandgemälde], \Command{interiorS} [Statuen]).
 Diese sollen auch dann angezeigt werden, wenn \Command{interior} selbst nicht definiert ist.
 
-Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt:
+Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. \eintrag{Haus-des-Wilden-Ebers}
+Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt:
 \begin{lstlisting}[style=noNumber]
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
-	label={haus:Wilden-Ebers},
+	label={Haus-des-Wilden-Ebers2},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
 	location={Regio VII, Insula 4, Eingang 48, 43},
@@ -245,16 +270,18 @@ Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. Im Fließtext ist d
 	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
 }
 \end{lstlisting}
-So wird daraus:
+So wird daraus:\eintrag{Haus-des-Wilden-Ebers}
+\begin{bsp}
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
-	label={haus:Wilden-Ebers},
+	label={Haus-des-Wilden-Ebers},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
 	location={Regio VII, Insula 4, Eingang 48, 43},
 	interiorM={S/W-Mosaik},
 	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
 }
+\end{bsp}
 Um zu diesem Ergebnis zu kommen, 
 ist es notwendig, mit Booleschen Operatoren zu arbeiten.
 Dafür müssen bei den \Command{key}-Definitionen drei Operatoren eingeführt werden:
@@ -302,13 +329,148 @@ auch wenn \Command{interior} selbst nicht definiert ist.
 
 
 Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
- erwähnt wird, wofür der Eintrag \Command{literature} bereit gestellt wird.
+ erwähnt wird.
 Dafür wird der Umweg über, oder besser gesagt die Integration von Python gewählt.
 \section{Exkurs Python}
+In der Präambel des \TeX-Dokuments muss aufgeführt werden, 
+dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}.
+In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
+die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
+\begin{lstlisting}[style=nonumber]
+	\newwrite\myfile
+	\immediate\openout\myfile=\jobname.sti
+	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
+\end{lstlisting}
+
+Für die spätere gesammelte Anzeige der Stichwörter und die entsprechende Seitenzahl müssen zwei neue Definitionen 
+eingeführt werden.
+\begin{lstlisting}[style=nonumber]
+	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
+	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
+\end{lstlisting}
+Die erste ist dafür zuständig, dass bei dem Macro \Macro{ausgabe}\{Stichwort\} das Stichwort sowie der Text 
+\emph{was referenced on page(s):} mit den Seitenzahlen geschrieben werden.
+Die zweite Definition gibt die Stichwörter und die Seitenzahlen als Tabelle aus.
+
+Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und fertig ist die Vorarbeit in der Prämbel:
+\begin{lstlisting}[style=number]
+\makeatletter
+	\newwrite\myfile
+	\immediate\openout\myfile=\jobname.sti
+	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
+	\newcommand{\ausgabe}[2]{S.\ #2}
+	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
+\makeatother
+\end{lstlisting}
+%%%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
+Der Python-Code setzt sich folgendermaßen zusammen:
+
 
 \section{Integration}
+Im \TeX-Dokument muss nun an allen Stellen, 
+an denen das Stichwort auftaucht oder der Rückverweis stattfinden soll,
+der Befehl  \Macro{eintrag}\{Stichwort\} gesetzt werden.
+Wenn alle Stichwörter gesetzt sind, 
+kann man die Art der Ausgabe wählen.
+Entweder werden alle Seitenzahlen zu einem Stichwort angezeigt, dies erfolgt über \Macro{ausgabe}\{Stichwort\}
+oder Stichwörter und Seiten werden mit  \Macro{stichworttabelle} tabellerisch aufgelistet.
 
 
+Für unser konkretes Beispiel der Katalogeinträge bedeutet dies, dass das Makro \Macro{ausgabe} in die Katalogeintragdefinition integriert werden muss.
+\begin{lstlisting}[style=number]
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}}}
+\end{lstlisting}
+Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{literature} angegeben ist (hier \emph{Haus}), an den Befehl \Macro{ausgabe} übergeben:
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	literature={Haus},
+}
+\end{lstlisting}
+Das bedeutet selbstverständlich, dass im Fließtext entsprechend \Macro{eintrag}\{Haus\} gesetzt werden muss.
+
+Wer es etwas einfacher haben möchte, wählt in der Defintion von \Command{literature} einen automatisch einmaligen Wert, 
+den man zudem nicht nochmals im Katalog händisch eingeben muss. 
+Ein solcher Wert steckt hinter \Command{KVlabel}, welcher im Zuge der \Command{label}-Definition angelegt ist 
+(was die Definition eines \Command{labels} erfordert, das sich jedoch bei Katalogen ohnehin anbietet).
+\begin{lstlisting}[style=nonumber]
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}}}
+\end{lstlisting}
+Und für alle, die sich alle Möglichkeiten offen halten wollen:
+\begin{lstlisting}[style=number]
+\define@key{catalogue}{literature}{%
+	\def\KVliterature{%
+		\ausgabe{%
+				\ifdef{#1}%
+					{#1}%
+					{\ifdef{\KVlabel}%
+							{\KVlabel}
+							{}%
+					}
+				}
+		}
+}
+\end{lstlisting}
+Wenn etwas in den Katalogeintrag \Command{literature} steht, dann wird dieser Eintrag übernommen,
+ansonsten wird geschaut, ob das \Command{label} definiert ist und wenn dies nicht der Fall ist, bleibt dieser Katalogeintrag undefiniert und es findet auch keine Weiterverarbeitung statt. 
+
+Für die Darstellung des Katalogeintrages muss ebenfalls eine Neudefinition eingeführt werden:
+\begin{lstlisting}[style=nonumber]
+	\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
+\end{lstlisting}
+
+
+
+Ein vollständiger Katalogeintrag:
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	literature={Haus-Fabius},
+}
+\end{lstlisting}
+Nun wird \emph{Haus} an \Macro{ausgabe} übergeben.
+Im Folgenden Fall ist dies der Wert vom Katalogeintrag \Command{label}:\eintrag{Haus-des-Wilden-Ebers}
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={Haus-des-Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+}
+\end{lstlisting}
+Während im ersten Fall im Fließtext an gewünschter Stelle \Macro{eintrag}\{Haus-Fabius\} gesetzt werden muss,
+gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{Haus-Rufus}
+\begin{bsp}
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	literature={Haus-Fabius},
+}
+\end{bsp}
+
+\begin{bsp}
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={Haus-des-Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+}
+\end{bsp}
+Sobald diese Vorarbeiten getan sind, alle Stichwörter entsprechend mit \Macro{eintrag} gesetzt sind, 
+dann muss einmal (mit \XeLaTeX) kompiliert werden,
+anschließend der Python-Code im entsprechenden externen Programm ausgeführt und
+schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
+
+\stichworttabelle
 
 %%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
