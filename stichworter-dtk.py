@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
 import re
@@ -9,7 +8,7 @@ from os import remove, close
 class Stichworter():
     
     def __init__(self):
-        print('"Stichworter" by Uwe Ziegenhagen, ziegenhagen@gmail.com')
+        print('"Stichworter" by Uwe Ziegenhagen, ziegenhagen@gmail.com\n\n')
 
     def regReplace(self,file_path, pattern, subst):
         """
@@ -37,18 +36,21 @@ class Stichworter():
         result = df.groupby(['Stichwort'], as_index=False)['Seite'].agg(lambda x: ', '.join(np.unique(x).astype(str)))
         result = pd.DataFrame(result) # create dataframe from the resulting series
         result = result.set_index('Stichwort') # Set the index to the Stichwort column, since we are to use this as key
+        print(result)
 
         # export list of all keywords to LaTeX file
-        result.to_latex(jobname+'.tab',index=False)
+        # TODO: write table myself, allow finer control of typesetting
+        result.to_latex(jobname+'.tab',index=True)
         
         # Go through the list of Keyword/Pages Tupels
         # and search for each Keyword. Replace the content of the pages {<content>}
         # with the joint list of pages
+        # Remark: \ausgabe{<keyword>} needs empty {} after it ==> \ausgabe{<keyword>}{}
         for index, row in result.iterrows():
-            suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)(.*)(})')
+            suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)(.*)(})')  
             self.regReplace(jobname+'.tex',suchmuster,'\\\\ausgabe{'+ index +'}{' + row[0] + '}')
             print(index,':',row[0])
             
 # put here the name of the TeX-file
 # more than one TeX file is currently not supported or at least not tested
-x = Stichworter().process('dtk_catalogentry')
+x = Stichworter().process('dtk-catalogentry')

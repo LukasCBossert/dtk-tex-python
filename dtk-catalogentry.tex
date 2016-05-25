@@ -70,6 +70,7 @@
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
 \define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}{}}}
+%\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}{}}}
 %\define@key{catalogue}{literature}{%
 %	\def\KVliterature{%
 %				\ifdef{#1}%
@@ -377,7 +378,7 @@ oder Stichwörter und Seiten werden mit  \Macro{stichworttabelle} tabellerisch a
 
 Für unser konkretes Beispiel der Katalogeinträge bedeutet dies, dass das Makro \Macro{ausgabe} in die Katalogeintragdefinition integriert werden muss.
 \begin{lstlisting}[style=number]
-\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}}}
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}{}}}
 \end{lstlisting}
 Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{literature} angegeben ist (hier \emph{Haus}), an den Befehl \Macro{ausgabe} übergeben:
 \begin{lstlisting}[style=number]
@@ -392,21 +393,19 @@ den man zudem nicht nochmals im Katalog händisch eingeben muss.
 Ein solcher Wert steckt hinter \Command{KVlabel}, welcher im Zuge der \Command{label}-Definition angelegt ist 
 (was die Definition eines \Command{labels} erfordert, das sich jedoch bei Katalogen ohnehin anbietet).
 \begin{lstlisting}[style=nonumber]
-\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}}}
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}{}}}
 \end{lstlisting}
 Und für alle, die sich alle Möglichkeiten offen halten wollen:
 \begin{lstlisting}[style=number]
 \define@key{catalogue}{literature}{%
 	\def\KVliterature{%
-		\ausgabe{%
 				\ifdef{#1}%
-					{#1}%
-					{\ifdef{\KVlabel}%
-							{\KVlabel}
+						{\ausgabe{#1}{}}
+						{\ifdef{\KVlabel}%
+							{\ausgabe{\KVlabel}}
 							{}%
-					}
-				}
-		}
+						}
+			}
 }
 \end{lstlisting}
 Wenn etwas in den Katalogeintrag \Command{literature} steht, dann wird dieser Eintrag übernommen,
@@ -470,6 +469,7 @@ anschließend der Python-Code im entsprechenden externen Programm ausgeführt un
 schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
 
 \stichworttabelle
-
+\ausgabe{Haus-Rufus}{}
+\ausgabe{Haus-des-Wilden-Ebers}{}
 %%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
