@@ -69,11 +69,11 @@
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}}}
+\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}{}}}
 %\define@key{catalogue}{literature}{%
 %	\def\KVliterature{%
 %				\ifdef{#1}%
-%						{\ausgabe{#1}}
+%						{\ausgabe{#1}{}}
 %						{\ifdef{\KVlabel}%
 %							{\ausgabe{\KVlabel}}
 %							{}%
@@ -357,7 +357,7 @@ Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und 
 	\newwrite\myfile
 	\immediate\openout\myfile=\jobname.sti
 	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
-	\newcommand{\ausgabe}[2]{S.\ #2}
+	\newcommand{\ausgabe}[2]{#2}
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \makeatother
 \end{lstlisting}
