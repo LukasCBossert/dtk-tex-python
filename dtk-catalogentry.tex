@@ -328,9 +328,15 @@ auch wenn \Command{interior} selbst nicht definiert ist.
 
 
 Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
- erwähnt wird.
-Dafür wird der Umweg über, oder besser gesagt die Integration von Python gewählt.
+ erwähnt wird. Dies erfolgt über Python, Lösungen über andere Programmiersprachen oder möglicherweise sogar \TeX\ selbst sind auch denkbar.
+
 \section{Exkurs Python}
+
+Um für ein gegebenes Stichwort bestimmen zu können, auf welchen Seiten aufgeführt wird, muss diese Information schon auf \LaTeX-Ebene weggeschrieben werden.
+
+Dazu bedienen wir uns des \Command{newwrite} Befehls, der eine neue Ausgabedatei öffnet. Über einen \Command{\eintrag} Befehl legen wir fest, dass der Übergabeparameter zusammen mit dem aktuellen Wert des Seitenzählers in diese Datei geschrieben wird.
+
+
 In der Präambel des \TeX-Dokuments muss aufgeführt werden, 
 dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}.
 In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
@@ -366,14 +372,13 @@ Der Python-Code setzt sich folgendermaßen zusammen:
 
 
 \section{Integration}
-Im \TeX-Dokument muss nun an allen Stellen, 
+
+Im \LaTeX-Dokument muss nun an allen Stellen, 
 an denen das Stichwort auftaucht oder der Rückverweis stattfinden soll,
 der Befehl  \Macro{eintrag}\{Stichwort\} gesetzt werden.
-Wenn alle Stichwörter gesetzt sind, 
-kann man die Art der Ausgabe wählen.
+Wenn alle Stichwörter gesetzt sind, kann man die Art der Ausgabe wählen.
 Entweder werden alle Seitenzahlen zu einem Stichwort angezeigt, dies erfolgt über \Macro{ausgabe}\{Stichwort\}\{\}
 oder Stichwörter und Seiten werden mit  \Macro{stichworttabelle} tabellerisch aufgelistet.
-
 
 Für unser konkretes Beispiel der Katalogeinträge bedeutet dies, dass das Makro \Macro{ausgabe} in die Katalogeintragdefinition integriert werden muss.
 \begin{lstlisting}[style=number]
