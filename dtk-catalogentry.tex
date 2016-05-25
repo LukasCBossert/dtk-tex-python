@@ -119,24 +119,23 @@ Nachdem  eine  Lösung gefunden wurde, die allen bisher genannten Anforderungen 
 sollten in einer Kategorie alle Seitenzahlen enthalten sein, auf denen im Haupttext auf den Katalogeintrag verwiesen wird.
 Ein  Lösungsansatz sah die Nutzung von  \Package{glossaries} vor: 
 Dafür musste allerdings für jeden Katalogeintrag ein eigenes Glossar angelegt werden, was nicht nur viel händische Arbeit bedeutet,
-sondern auch die Zählerkapazitäten von \TeX\ überforderten.
+sondern auch die Zählerkapazitäten von \TeX\ überforderte.
 
 Es musste also eine andere Lösung her und ich (Lukas) erinnerte mich an einen Beitrag, den Uwe Ziegenhagen in dtk 1/2015 vorgestellt hatte:
 Damals ging es darum, bei einem Werkkatalog die Erwähnung des Stückes im Haupttext anzugeben. 
-Prima, genau das, was ich gesucht habe und ich fand den damals verwendeten Code auf seiner Webseite.\footnote{\url{http://uweziegenhagen.de/?p=3020}}
+Prima, genau das, was ich gesucht habe und den damals verwendeten Code fand  ich auf seiner Webseite.\footnote{\url{http://uweziegenhagen.de/?p=3020}}
 Allerdings  sah ich nun, dass die Aufgabe  damals darin bestand, nur \emph{eine} Erwähnung im  Haupttext anzugeben,
 was mit \Command{label} und \Command{ref{}} bewerkstelligt werden konnte.
 Ich brauche jedoch alle Erwähnungen im Haupttext.
-Meine Emailanfrage bei Uwe nach einer Möglichkeit mehr als nur eine Erwähnung anzeigen zu lassen,
+Meine E-Mail-Anfrage bei Uwe nach einer Möglichkeit, mehr als nur eine Erwähnung anzeigen zu lassen,
 beantwortete er mit dem Vorschlag, mittels Python das Problem zu lösen.
 
-Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX\ und Python arbeiten zu können, wurde ein Repository auf der 
-Plattform \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, 
-die unabhängig der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle bereithält,
-sodass sich kollaboriertes Arbeiten  sehr gut konzipieren lässt. 
+Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX\ und Python arbeiten zu können, wurde ein Repository auf \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, einer Plattform,  
+die unabhängig von der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle ermöglicht.
 
 
 \subsection{Katalogeintrag}
+
 Als Aufgabe soll ein Katalog zu den Häusern in Pompeji angelegt werden,
 der Auskunft über den Namen des Hauses, dessen Verortung und Grundstücksgröße  geben soll.
 Zudem soll eine kurze Beschreibung enthalten sein und die Angabe über die Innenausstattung, 
@@ -144,7 +143,7 @@ die wiederum aufgeschlüsselt werden kann auf die Untergruppen Mosaik, Wandgemä
 Zum Schluss soll im Katalogeintrag angezeigt werden, 
 auf welchen Seiten des Fließtextes das Haus genannt wird.
 
-Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit dem Paket \Package{keyval}.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit Hilfe des   \Package{keyval} Pakets.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
 Dafür werden in der Präambel verschiedene Schlüssel (\Command{keys}) definiert.
 In der Grundversion sieht die Definition eines Eintrages wie folgt aus:\footnote{Vgl. \url{http://www.tug.org/tugboat/tb30-1/tb94wright-keyval.pdf}}
 \begin{lstlisting}[style=noNumber]
