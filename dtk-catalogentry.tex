@@ -332,9 +332,12 @@ Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
 
 \section{Exkurs Python}
 
-Um für ein gegebenes Stichwort bestimmen zu können, auf welchen Seiten aufgeführt wird, muss diese Information schon auf \LaTeX-Ebene weggeschrieben werden.
+Um für ein gegebenes Stichwort bestimmen zu können, auf welchen Seiten es aufgeführt wird, 
+muss diese Information schon auf \LaTeX-Ebene weggeschrieben werden.
 
-Dazu bedienen wir uns des \Command{newwrite} Befehls, der eine neue Ausgabedatei öffnet. Über einen \Command{\eintrag} Befehl legen wir fest, dass der Übergabeparameter zusammen mit dem aktuellen Wert des Seitenzählers in diese Datei geschrieben wird.
+Dazu bedienen wir uns des \Macro{newwrite} Befehls, der eine neue Ausgabedatei öffnet. 
+Über einen \Macro{eintrag} Befehl legen wir fest, 
+dass der Übergabeparameter zusammen mit dem aktuellen Wert des Seitenzählers in diese Datei geschrieben wird.
 
 
 In der Präambel des \TeX-Dokuments muss aufgeführt werden, 
@@ -357,15 +360,15 @@ Die erste ist dafür zuständig, dass bei dem Macro \Macro{ausgabe}\{Stichwort\}
 \emph{was referenced on page(s):} mit den Seitenzahlen geschrieben werden.
 Die zweite Definition gibt die Stichwörter und die Seitenzahlen als Tabelle aus.
 
-Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und fertig ist die Vorarbeit in der Prämbel:
+Zusammengesetzt sieht der Text in der Präambel wie folgt aus,
+wobei die Ausgabe des \Macro{ausgabe} zugleich für das konkrete Beispiel abgeändert wurde.
+%Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und fertig ist die Vorarbeit in der Prämbel:
 \begin{lstlisting}[style=number]
-\makeatletter
 	\newwrite\myfile
 	\immediate\openout\myfile=\jobname.sti
 	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
 	\newcommand{\ausgabe}[2]{#2}
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
-\makeatother
 \end{lstlisting}
 %%%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
 Der Python-Code setzt sich folgendermaßen zusammen:
