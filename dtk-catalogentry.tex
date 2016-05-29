@@ -9,6 +9,18 @@
 %\usepackage{etoolbox}
 %\usepackage{keyval}
 \usepackage{cleveref}
+
+\lstset{literate=%
+    {Ö}{{\"O}}1
+    {Ä}{{\"A}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+    {ü}{{\"u}}1
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {~}{{\textasciitilde}}1
+}
+
 %----------------------
 \newenvironment{bsp}{\begin{framed}\begin{footnotesize}}%
 {\end{footnotesize}\end{framed}}
@@ -332,17 +344,11 @@ Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
 
 \section{Exkurs Python}
 
-Um für ein gegebenes Stichwort bestimmen zu können, auf welchen Seiten es aufgeführt wird, 
-muss diese Information schon auf \LaTeX-Ebene weggeschrieben werden.
+Python ist eine interpretierte Programmiersprache, die den Python-Neuling durch weitestgehende Nicht-Nutzung von Klammern verwirrt. Stattdessen nutzt Python Tabulator-Einrückungen, um zusammengehörige Code-Teile zu kennzeichnen. Was erst einmal gewöhnungsbedürftig klingt, hat in der Praxis Vorteile, denn selbst fremder Python-Code ist erstaunlich gut lesbar. Im aktuellen Anwendungsfall beschränken wir uns jedoch nicht auf Python, sondern nutzen mit  \verb|pandas| eine Erweiterung zur Datenanalyse. \verb|pandas|, ursprünglich zur Analyse von Finanzdaten entwickelt, erleichtert die Arbeit mit strukturierten Daten aller Art. Das Einlesen, Filtern und Aggregieren von Daten jeder Art geht damit erstaunlich einfach, dem interessierten Leser sei eine nähere Beschäftigung mit \verb|pandas| daher ans Herz gelegt.
 
-Dazu bedienen wir uns des \Macro{newwrite} Befehls, der eine neue Ausgabedatei öffnet. 
-Über einen \Macro{eintrag} Befehl legen wir fest, 
-dass der Übergabeparameter zusammen mit dem aktuellen Wert des Seitenzählers in diese Datei geschrieben wird.
+Da Python auf Basis des \LaTeX-Quelltextes keine Information hat, auf welchen Seiten ein Stichwort erwähnt wird, muss dies auf \LaTeX-Ebene weggeschrieben werden. 
 
-
-In der Präambel des \TeX-Dokuments muss aufgeführt werden, 
-dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}.
-In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
+Dazu bedienen wir uns des \Macro{newwrite} Befehls, der eine neue Ausgabedatei öffnet.  In der Präambel des \TeX-Dokuments muss aufgeführt werden, dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}. In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
 die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
 \begin{lstlisting}[style=nonumber]
 	\newwrite\myfile
@@ -350,18 +356,19 @@ die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
 	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
 \end{lstlisting}
 
-Für die spätere gesammelte Anzeige der Stichwörter und die entsprechende Seitenzahl müssen zwei neue Definitionen 
-eingeführt werden.
+Für die spätere gesammelte Anzeige der Stichwörter und die entsprechende Seitenzahl müssen zwei weitere Befehle definiert 
+werden:
+
 \begin{lstlisting}[style=nonumber]
 	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \end{lstlisting}
-Die erste ist dafür zuständig, dass bei dem Macro \Macro{ausgabe}\{Stichwort\} das Stichwort sowie der Text 
-\emph{was referenced on page(s):} mit den Seitenzahlen geschrieben werden.
-Die zweite Definition gibt die Stichwörter und die Seitenzahlen als Tabelle aus.
+
+Die erste sorgt dafür, dass bei dem  \Macro{ausgabe}\{Stichwort\}\{~\}  Makro das Stichwort sowie der Text 
+\emph{was referenced on page(s):} mit den Seitenzahlen gesetzt wird. Der zweite Befehl gibt die Stichwörter und die Seitenzahlen als Tabelle aus.
 
 Zusammengesetzt sieht der Text in der Präambel wie folgt aus,
-wobei die Ausgabe des \Macro{ausgabe} zugleich für das konkrete Beispiel abgeändert wurde.
+wobei die Ausgabe des \Macro{ausgabe} Makros zugleich für das konkrete Beispiel abgeändert wurde.
 %Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und fertig ist die Vorarbeit in der Prämbel:
 \begin{lstlisting}[style=number]
 	\newwrite\myfile
@@ -371,13 +378,14 @@ wobei die Ausgabe des \Macro{ausgabe} zugleich für das konkrete Beispiel abgeä
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \end{lstlisting}
 %%%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
-Der Python-Code setzt sich folgendermaßen zusammen:
+
+Schauen wir uns nun den Python-Code dazu an:
+
 
 
 \section{Integration}
 
-Im \LaTeX-Dokument muss nun an allen Stellen, 
-an denen das Stichwort auftaucht oder der Rückverweis stattfinden soll,
+Im \LaTeX-Dokument muss nun an allen Stellen, an denen das Stichwort auftaucht oder der Rückverweis stattfinden soll,
 der Befehl  \Macro{eintrag}\{Stichwort\} gesetzt werden.
 Wenn alle Stichwörter gesetzt sind, kann man die Art der Ausgabe wählen.
 Entweder werden alle Seitenzahlen zu einem Stichwort angezeigt, dies erfolgt über \Macro{ausgabe}\{Stichwort\}\{\}

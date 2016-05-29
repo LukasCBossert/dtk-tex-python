@@ -2,6 +2,5 @@ Haus-Rufus:4
 Haus-Rufus:4
 Haus-des-Wilden-Ebers:4
 Haus-des-Wilden-Ebers:5
-\aftergroup \futurelet \immediate \write \myfile {\let \def  ,.{ ,.}\def {,}\@@italiccorr :6}:6
 Haus-des-Wilden-Ebers:8
 Haus-Rufus:9
