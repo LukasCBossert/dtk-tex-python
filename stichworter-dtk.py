@@ -27,6 +27,31 @@ class Stichworter():
         remove(file_path)
         #Move new file
         move(abs_path, file_path)
+    
+    def regexpTester(self):
+        suchmuster = re.compile('(\\\\\\\\ausgabe{hallo}{)(.*)([}])')
+        testString = '\\\\ausgabe{hallo}{1}'
+        print(testString,':',re.sub(suchmuster,'\g<2>',testString))
+
+    def regexpTester3(self):
+        s = "1,2,3"
+        p = re.compile(r"(?P<one>\d),(?P<two>\d),(?P<three>\d)")
+        m = re.match(p, s) 
+        for k, v in m.groupdict().items():
+            print(k,':',v)
+
+    def regexpTester4(self):
+        s = '\\\\ausgabe{hallo}{1}}}}}'
+        p = re.compile(r"(?P<Befehl>\\\\ausgabe{hallo}{)(?P<Keyword>[0-9,]*)(?P<Klammern>}{1})(?P<Rest>.*)")
+        m = re.match(p, s) 
+        for k, v in m.groupdict().items():
+            print(k,':',v)
+
+    def regexpTester2(self):
+        suchmuster = re.compile('(.*)(}{1})(.*)')
+        testString = 'abcd}efgh'
+        print(re.sub(suchmuster,'\g<1>\g<3>',testString))
+
 
     def process(self,jobname):
         # read file with Keyword:Page format
@@ -53,4 +78,5 @@ class Stichworter():
             
 # put here the name of the TeX-file
 # more than one TeX file is currently not supported or at least not tested
-x = Stichworter().process('dtk-catalogentry')
+y = Stichworter().regexpTester4()
+#x = Stichworter().process('dtk-catalogentry')
