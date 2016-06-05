@@ -47,6 +47,17 @@ class Stichworter():
         for k, v in m.groupdict().items():
             print(k,':',v)
 
+    def regexpTester5(self):
+        s = '\\\\ausgabe{hallo}{1,2,3}}}}}'
+        p = re.compile(r"(?P<Befehl>\\\\ausgabe{)(?P<Keyword>[a-z-]*)(?P<Klammern>}{)(?P<Seiten>[0-9, ]*)(?P<Klammer>}{1})(?P<Rest>.*)")
+        m = re.match(p, s) 
+        for i in m.groups():
+            print(i)
+        
+#        for k, v in m.groupdict().items():
+#            print(k,':',v)
+
+
     def regexpTester2(self):
         suchmuster = re.compile('(.*)(}{1})(.*)')
         testString = 'abcd}efgh'
@@ -78,5 +89,5 @@ class Stichworter():
             
 # put here the name of the TeX-file
 # more than one TeX file is currently not supported or at least not tested
-y = Stichworter().regexpTester4()
+y = Stichworter().regexpTester5()
 #x = Stichworter().process('dtk-catalogentry')
