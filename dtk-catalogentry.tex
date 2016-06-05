@@ -461,8 +461,10 @@ Im Folgenden Fall ist dies der Wert vom Katalogeintrag \Command{label}:\eintrag{
 Während im ersten Fall im Fließtext an gewünschter Stelle \Macro{eintrag}\{Haus-Fabius\} gesetzt werden muss,
 gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{Haus-Rufus} \ausgabe{Haus-Rufus}{4, 9} %%%% Uwe 
 
+\eintrag{Haus-Fabius}
+
 %
-% \ausgabe{Haus-Rufus}{}
+% \ausgabe{Haus-Rufus}{4, 9}
 % Dann Python 
 
 \begin{bsp}
@@ -472,7 +474,7 @@ gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	literature={\ausgabe{Haus-Fabius}{}},
+	literature={\ausgabe{Haus-Fabius}{9}},
 }
 \end{bsp}
 
