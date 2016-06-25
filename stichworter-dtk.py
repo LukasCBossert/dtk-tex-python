@@ -28,42 +28,6 @@ class Stichworter():
         #Move new file
         move(abs_path, file_path)
     
-    def regexpTester(self):
-        suchmuster = re.compile('(\\\\\\\\ausgabe{hallo}{)(.*)([}])')
-        testString = '\\\\ausgabe{hallo}{1}'
-        print(testString,':',re.sub(suchmuster,'\g<2>',testString))
-
-    def regexpTester3(self):
-        s = "1,2,3"
-        p = re.compile(r"(?P<one>\d),(?P<two>\d),(?P<three>\d)")
-        m = re.match(p, s) 
-        for k, v in m.groupdict().items():
-            print(k,':',v)
-
-    def regexpTester4(self):
-        s = '\\\\ausgabe{hallo}{1}}}}}'
-        p = re.compile(r"(?P<Befehl>\\\\ausgabe{hallo}{)(?P<Keyword>[0-9,]*)(?P<Klammern>}{1})(?P<Rest>.*)")
-        m = re.match(p, s) 
-        for k, v in m.groupdict().items():
-            print(k,':',v)
-
-    def regexpTester5(self):
-        s = '\\\\ausgabe{hallo}{1,2,3}}}}}'
-        p = re.compile(r"(?P<Befehl>\\\\ausgabe{)(?P<Keyword>[a-z-]*)(?P<Klammern>}{)(?P<Seiten>[0-9, ]*)(?P<Klammer>}{1})(?P<Rest>.*)")
-        m = re.match(p, s) 
-        for i in m.groups():
-            print(i)
-        
-#        for k, v in m.groupdict().items():
-#            print(k,':',v)
-
-
-    def regexpTester2(self):
-        suchmuster = re.compile('(.*)(}{1})(.*)')
-        testString = 'abcd}efgh'
-        print(re.sub(suchmuster,'\g<1>\g<3>',testString))
-
-
     def process(self,jobname):
         # read file with Keyword:Page format
         df = pd.read_csv(jobname+'.sti',sep=':',names=['Stichwort','Seite'])
@@ -83,11 +47,11 @@ class Stichworter():
         # with the joint list of pages
         # Remark: \ausgabe{<keyword>} needs empty {} after it ==> \ausgabe{<keyword>}{}
         for index, row in result.iterrows():
-            suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)(.*)(})')  
-            self.regReplace(jobname+'.tex',suchmuster,'\\\\ausgabe{'+ index +'}{' + row[0] + '}')
+            suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)([0-9, ]*})')
+            self.regReplace(jobname+'.tex',suchmuster,'\\\\ausgabe{'+ index +'}{' + row[0]+'}')
             print(index,':',row[0])
             
 # put here the name of the TeX-file
 # more than one TeX file is currently not supported or at least not tested
-y = Stichworter().regexpTester5()
-#x = Stichworter().process('dtk-catalogentry')
+#y = Stichworter().regexpTester5()
+x = Stichworter().process('dtk-catalogentry')
