@@ -54,4 +54,4 @@ class Stichworter():
 # put here the name of the TeX-file
 # more than one TeX file is currently not supported or at least not tested
 #y = Stichworter().regexpTester5()
-x = Stichworter().process('dtk-catalogentry')
+x = Stichworter().process('dtk-catalogueentry')
