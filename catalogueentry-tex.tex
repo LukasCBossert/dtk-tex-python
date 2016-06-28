@@ -59,21 +59,21 @@
 \define@boolkey{catalogue}[KV]{mark}[true]{}
 
 
-\def\neuesHaus#1{\expandafter\neues@Haus#1\@nil}% Haus,Label
-\def\neues@Haus#1,#2\@nil{%
-  \begingroup
-  \edef\x{\endgroup\expandafter\xdef\csname#2\endcsname{#1}}\x
-  \expandafter\xdef\csname#2-pages\endcsname{}%
-}
-
 \let\LabelCref\labelcref
-\renewcommand\labelcref[1]{%
-  \expandafter\ifx\csname#1-pages\endcsname\@empty
+\renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
+\def\label@cref#1,#2,#3\@nil{%
+  \expandafter\ifx\csname#1-pages\endcsname\relax  % schon definiert??
     \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
   \else
     \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
   \fi
-  \LabelCref{#1}}
+  \LabelCref{#1}%
+  \ifx\relax#2\relax % kein label mehr da
+    \def\next{}%
+  \else 
+    \def\next{\label@cref#2,#3\@nil}%
+  \fi
+  \next}
 \makeatother
 
 
@@ -84,14 +84,9 @@
 \begin{document}
 \maketitle
 
-
-\neuesHaus{Haus des M. Fabius Rufus,haus:M-Fabius-Rufus}
-\neuesHaus{Haus des Wilden Ebers,haus:Haus-des-Wilden-Ebers}
-\neuesHaus{Haus der Venus,haus:Haus-der-Venus}
-
 \section{Text}
 In meiner Arbeit beschäftige ich mit drei Häusern in Pompeji 
-(\labelcref{haus:M-Fabius-Rufus}, \labelcref{haus:Haus-des-Wilden-Ebers}).
+(\labelcref{haus:Haus-des-Wilden-Ebers}).
 %Eintrag:M-Fabius-Rufus
 %Eintrag:Haus-des-Wilden-Ebers
 %Eintrag:Haus-der-Venus
@@ -106,7 +101,7 @@ und das Haus des Wilden Ebers (\labelcref{haus:Haus-des-Wilden-Ebers}) das klein
 Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ und ›Haus der Venus‹ zudem in der Insula 4.
 %Eintrag:Haus-des-Wilden-Ebers
 %Eintrag:Haus-der-Venus
-(\labelcref{haus:M-Fabius-Rufus}, \labelcref{haus:Haus-der-Venus}).
+(\labelcref{haus:M-Fabius-Rufus,haus:Haus-der-Venus,haus:Haus-des-Wilden-Ebers}).
 
 \clearpage
 
