@@ -83,19 +83,6 @@
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
 \define@key{catalogue}{literature}{\def\KVliterature{#1}}
 
-%\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{#1}{}}}
-%\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}{}}}
-%\define@key{catalogue}{literature}{%
-%	\def\KVliterature{%
-%				\ifdef{#1}%
-%						{\ausgabe{#1}{}}
-%						{\ifdef{\KVlabel}%
-%							{\ausgabe{\KVlabel}}
-%							{}%
-%						}
-%			}
-%}
-
 \makeatother
 %----------------------python
 \makeatletter
@@ -108,7 +95,7 @@
 \makeatother
 
 \begin{document}
-\title{Integration von Python in \XeLaTeX\ am Beispiel von Katalogeinträgen}
+\title{Integration von Python in \TeX\ am Beispiel von Katalogeinträgen}
 \Author{Lukas C.}{Bossert}%
 			{Cranachstr.~24\\
 			12157 Berlin\\
@@ -147,9 +134,11 @@ beantwortete er mit dem Vorschlag, mittels Python das Problem zu lösen.
 Um gemeinsam an dem hybriden Konstrukt von \XeLaTeX\ und Python arbeiten zu können, wurde ein Repository auf \Program{github}\footnote{\url{https://github.com/LukasCBossert/DTK-TeX-Python}} erstellt, einer Plattform,  
 die unabhängig von der Programmiersprache einen exzellenten Austausch und eine detaillierte Versionskontrolle ermöglicht.
 
+Während des Schreibprozesses an diesem Artikel und am Python-Code haben wir Schützenhilfe von Herbert Voß erhalten, 
+der uns eine \TeX -immanente Lösung erarbeitet hat, 
+die  als weitere Möglichkeit an unserem konkreten Beispiel präsentiert wird.
 
 \subsection{Katalogeintrag}
-
 Als Aufgabe soll ein Katalog zu den Häusern in Pompeji angelegt werden,
 der Auskunft über den Namen des Hauses, dessen Verortung und Grundstücksgröße  geben soll.
 Zudem soll eine kurze Beschreibung enthalten sein und die Angabe über die Innenausstattung, 
@@ -342,13 +331,25 @@ auch wenn \Command{interior} selbst nicht definiert ist.
 
 
 Was noch fehlt ist die Ausgabe der Seiten, auf denen der Katalogeintrag
- erwähnt wird. Dies erfolgt über Python, Lösungen über andere Programmiersprachen oder möglicherweise sogar \TeX\ selbst sind auch denkbar.
+ erwähnt wird. 
+Dies erfolgt zunächst über Python, 
+anschließend wird die \TeX -Variante vorgestellt.
+Lösungen über andere Programmiersprachen sind auch denkbar.
 
-\section{Exkurs Python}
+\section{Problemlösung mit Python}
+Python ist eine interpretierte Programmiersprache, die den Python-Neuling durch weitestgehende Nicht-Nutzung von Klammern verwirrt. 
+Stattdessen nutzt Python Tabulator-Einrückungen, 
+um zusammengehörige Code-Teile zu kennzeichnen. 
+Was erst einmal gewöhnungsbedürftig klingt, 
+hat in der Praxis Vorteile, denn selbst fremder Python-Code ist erstaunlich gut lesbar. 
+Im aktuellen Anwendungsfall beschränken wir uns jedoch nicht auf Python, 
+sondern nutzen mit  \verb|pandas| eine Erweiterung zur Datenanalyse. 
+\verb|pandas|, ursprünglich zur Analyse von Finanzdaten entwickelt, 
+erleichtert die Arbeit mit strukturierten Daten aller Art. 
+Das Einlesen, Filtern und Aggregieren von Daten jeder Art geht damit erstaunlich einfach, 
+dem interessierten Leser sei eine nähere Beschäftigung mit \verb|pandas| daher ans Herz gelegt.
 
-Python ist eine interpretierte Programmiersprache, die den Python-Neuling durch weitestgehende Nicht-Nutzung von Klammern verwirrt. Stattdessen nutzt Python Tabulator-Einrückungen, um zusammengehörige Code-Teile zu kennzeichnen. Was erst einmal gewöhnungsbedürftig klingt, hat in der Praxis Vorteile, denn selbst fremder Python-Code ist erstaunlich gut lesbar. Im aktuellen Anwendungsfall beschränken wir uns jedoch nicht auf Python, sondern nutzen mit  \verb|pandas| eine Erweiterung zur Datenanalyse. \verb|pandas|, ursprünglich zur Analyse von Finanzdaten entwickelt, erleichtert die Arbeit mit strukturierten Daten aller Art. Das Einlesen, Filtern und Aggregieren von Daten jeder Art geht damit erstaunlich einfach, dem interessierten Leser sei eine nähere Beschäftigung mit \verb|pandas| daher ans Herz gelegt.
-
-Da Python auf Basis des \LaTeX-Quelltextes keine Information hat, auf welchen Seiten ein Stichwort erwähnt wird, muss dies auf \LaTeX-Ebene weggeschrieben werden. 
+Da Python auf Basis des \LaTeX-Quelltextes keine Information hat, auf welchen Seiten ein Stichwort erwähnt wird, muss dies auf \LaTeX -Ebene weggeschrieben werden. 
 
 Dazu bedienen wir uns des \Macro{newwrite} Befehls, der eine neue Ausgabedatei öffnet.  In der Präambel des \TeX-Dokuments muss aufgeführt werden, dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}. In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
 die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
@@ -489,7 +490,7 @@ gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{
 }
 \end{bsp}
 Sobald diese Vorarbeiten getan sind, alle Stichwörter entsprechend mit \Macro{eintrag} gesetzt sind, 
-dann muss einmal (mit \XeLaTeX) kompiliert werden,
+dann muss einmal (bspw. mit \XeLaTeX) kompiliert werden,
 anschließend der Python-Code im entsprechenden externen Programm ausgeführt und
 schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
 
@@ -498,6 +499,79 @@ schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
 \ausgabe{Haus-Rufus}{4, 9}
 
 \ausgabe{Haus-des-Wilden-Ebers}{4, 5, 8}
+
+
+\section{Problemlösung mit \TeX}
+Die andere, \TeX -immanente Lösung arbeitet über \Macro{labelcref}.
+Das heißt, dass man im Gegensatz zur Python-Variante die Rückverweise nicht manuell setzen kann,
+sondern sie werden automatisch über die im Fließtext gesetzten \Macro{labelcref} erstellt.
+Dafür muss der Code des Katalogeintrages \Command{literature}  geändert werden:
+
+\begin{lstlisting}[style=number]
+\ifKVmark \item[Erwähnungen] S.~\expandafter\csname\KVlabel-pages\endcsname \fi
+  ...
+\define@boolkey{catalogue}[KV]{literature}[true]{}
+\end{lstlisting}
+
+Zudem muss das Makro \Macro{labelcref} bearbeitet werden,
+sodass \TeX\ die gesetzten Einträge auslesen kann.
+
+\begin{lstlisting}[style=number]
+\let\LabelCref\labelcref
+\renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
+\def\label@cref#1,#2,#3\@nil{%
+  \expandafter\ifx\csname#1-pages\endcsname\relax  % schon definiert??
+    \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
+  \else
+    \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
+  \fi
+  \LabelCref{#1}%
+  \ifx\relax#2\relax % kein label mehr da
+    \def\next{}%
+  \else 
+    \def\next{\label@cref#2,#3\@nil}%
+  \fi
+  \next}
+\end{lstlisting}
+
+Bei den Katalogeinträgen reicht es, am Ende \Command{literature} einzutragen:
+
+\begin{lstlisting}[style=number]
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	literature,
+}
+\end{lstlisting}
+
+%\renewcommand\thesection{Kat. \Alph{section}}
+
+\begin{bsp}
+\catalogueentry{%
+	house={Haus des M. Fabius Rufus},
+	size={172},
+	description={Haus besteht aus mehreren Einzelgebäuden.},
+	location={Regio VII, Insula 16, Eingang 17--22.},
+	interior={Reicher Fundkomplex.},
+	literature,
+}
+\end{bsp}
+
+\begin{bsp}
+\catalogueentry{%
+	house={Haus des Wilden Ebers},
+	label={Haus-des-Wilden-Ebers},
+	size={54},
+	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
+	location={Regio VII, Insula 4, Eingang 48, 43},
+	literature,
+}
+\end{bsp}
+
 
 %%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
