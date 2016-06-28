@@ -1,25 +1,19 @@
 \documentclass[ngerman]{scrartcl}
 
-\newcounter{A}\setcounter{A}{1}
-%\newcounter{B}
-%\newcommand\Marke{\refstepcounter{B}Marke\label{L.\theB}}
-\newif\ifZweiterLauf
-\makeatletter
-\AtBeginDocument{%
-  \immediate\write\@mainaux{\string\global\string\ZweiterLauftrue}}
-\makeatother
-
 \usepackage{libertine}
 \usepackage{babel}
 \usepackage{csquotes}
 \usepackage{siunitx}
 \usepackage{etoolbox}
 \usepackage{keyval}
+\usepackage{imakeidx}
+\makeindex[name=haus,columns=1]
+
 %----------------------
 \newcommand{\catalogueentry}[1]{%
 \begingroup
 \setkeys{catalogue}{#1}%
-\ifdef{\KVhouse}{\section{\KVhouse
+\ifdef{\KVhouse}{\subsection{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
 			}{}%
 \begin{labeling}{Beschreibung}
@@ -44,15 +38,7 @@
 			\end{labeling}
 	}{}}%
 \ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-\ifdef{\KVmark}{\item[Erwähnung] \ifZweiterLauf
-Es gibt insgesamt \theB\ Erwähnungen und zwar auf den Seiten: 
- \loop
-   \ifnum\theA<\the\KVmark 
-   \edef\x{\pageref{L.\theA}}\x,  % expandieren
-   \stepcounter{A}
- \repeat\else
-  \typeout{keine aux vorhanden, also erster Lauf!}
-\fi
+\ifdef{\KVmark}{\item[Erwähnung] %\printindex[haus]
 }{}
 \end{labeling}
 \endgroup
@@ -72,24 +58,38 @@ Es gibt insgesamt \theB\ Erwähnungen und zwar auf den Seiten:
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
 
-\define@key{catalogue}{mark}{\def\KVmark{#1}
-\newcounter{#1}
-\newcommand{\#1}{\refstepcounter{#1}\label{L.\the#1}}
-}
+\define@key{catalogue}{mark}{\def\KVmark{#1}}
 
 \makeatother
-\title{Katalogeinträge}
+\title{Meine wissenschaftliche Arbeit}
 \date{}
 \author{XY}
 
-
+\usepackage{hyperref}
+\usepackage[sort,nameinlink]{cleveref}%schönere Verweise
 \begin{document}
-%\maketitle
-%
-\vspace{2em}
-\ref{haus:M-Fabius-Rufus}; 
-\ref{haus:Haus-des-Wilden-Ebers}
+\maketitle
 
+\section{Text}
+In meiner Arbeit beschäftige ich mit drei Häusern in Pompeji (\labelcref{haus:M-Fabius-Rufus,haus:Haus-des-Wilden-Ebers,haus:Haus-der-Venus}).
+%Eintrag:M-Fabius-Rufus
+%Eintrag:Haus-des-Wilden-Ebers
+%Eintrag:Haus-der-Venus
+\clearpage
+Dabei zeigt sich, dass das Haus des M. Fabius Rufus (\labelcref{haus:M-Fabius-Rufus}) das größte ist, 
+und das Haus des Wilden Ebers (\labelcref{haus:Haus-des-Wilden-Ebers}) das kleinste.
+%Eintrag:M-Fabius-Rufus
+%Eintrag:Haus-des-Wilden-Ebers
+\clearpage
+Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ und ›Haus der Venus‹ zudem in der Insula 4.
+%Eintrag:Haus-des-Wilden-Ebers
+%Eintrag:Haus-der-Venus
+
+
+
+\clearpage
+\section{Katalogteil}
+\renewcommand\thesection{Kat. \Alph{section}}
 \catalogueentry{%
 	house={Haus des M. Fabius Rufus},
 	label={haus:M-Fabius-Rufus},
@@ -103,9 +103,6 @@ Es gibt insgesamt \theB\ Erwähnungen und zwar auf den Seiten:
 	mark={FabiusRufus},
 }
 
-\newpage
-
-
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
 	label={haus:Haus-des-Wilden-Ebers},
@@ -117,10 +114,14 @@ Es gibt insgesamt \theB\ Erwähnungen und zwar auf den Seiten:
 	mark={WilderEber},
 }
 
-\WilderEber \newpage
-\WilderEber \newpage
-\FabiusRufus \newpage
-\FabiusRufus \newpage
-
+\catalogueentry{%
+	house={Haus der Venus},
+	label={haus:Haus-der-Venus},
+	size={123},
+	description={Schönes großes Haus},
+	location={Regio VII, Insula 4, Eingang 12, 23},
+	interior={Keine Innenausstattung},
+	mark={Venus},
+}
 
 \end{document}

@@ -10,3 +10,11 @@
 *.xml
 
 *.bcf
+
+*.idx
+
+*.ilg
+
+*.ind
+
+*.out
