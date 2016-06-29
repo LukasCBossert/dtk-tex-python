@@ -7,23 +7,49 @@
 \usepackage{etoolbox}
 \usepackage{keyval}
 \usepackage{hyperref}
-\usepackage{caption}
 \usepackage[sort,nameinlink]{cleveref}%schönere Verweise
+\usepackage{siunitx}
+\usepackage{framed}
+\usepackage{booktabs}
+%\usepackage{etoolbox}
+%\usepackage{keyval}
+\usepackage{cleveref}
+
+\lstset{literate=%
+    {Ö}{{\"O}}1
+    {Ä}{{\"A}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+    {ü}{{\"u}}1
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {~}{{\textasciitilde}}1
+}
 
 %----------------------
+\newenvironment{bsp}{\begin{framed}\begin{footnotesize}}%
+{\end{footnotesize}\end{framed}}
+%----------------------
 \newcommand\catalogueentry[1]{%
-\begingroup
+\RaggedRight\begingroup
 \setkeys{catalogue}{#1}%
-\ifdef{\KVhouse}{\subsection{\KVhouse
+\ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
 			}{}%
 \begin{labeling}{Beschreibung}
+%	\footnotesize %
+%	\setlength{\itemsep}{0pt}%
+%    \setlength{\parskip}{0pt}%
+%    \setlength{\parsep}{0pt}%
 \ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
 \ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
 \ifdef{\KVinterior}{%
 	\item[Ausstattung] \KVinterior %
 	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
 	\begin{labeling}{Wandgemälde}
+%		\setlength{\itemsep}{0pt}%
+%    		\setlength{\parskip}{0pt}%
+%    		\setlength{\parsep}{0pt}%
 			\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
 			\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
 			\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
@@ -33,14 +59,16 @@
 	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
 		\item[Ausstattung]%
 	\begin{labeling}{Wandgemälde}	
+%			\setlength{\itemsep}{0pt}
+%	 		\setlength{\parskip}{0pt}%
+%    			\setlength{\parsep}{0pt}%
 				\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
 				\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
 				\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
 			\end{labeling}
 	}{}}%
-  \ifdef{\KVsize}{\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-  \ifdef{\KVfigures}{\item[Tafeln] \cref{\KVfigures}.}{}%
-  \ifKVmark \item[Erwähnung] \expandafter\csname\KVlabel-pages\endcsname \fi
+\ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
+\ifdef{\KVliterature}{\item[Erwähnungen]S.\ \KVliterature}{}%		oder \pno{}
 \end{labeling}
 \endgroup
 }
@@ -49,7 +77,7 @@
 \newbool{@KVinteriorM}%Mosaik
 \newbool{@KVinteriorW}%Wandgemälde
 \newbool{@KVinteriorS}%Statue
-\define@key{catalogue}{house}{\gdef\KVhouse{#1}}
+\define@key{catalogue}{house}{\def\KVhouse{#1}}
 \define@key{catalogue}{label}{\def\KVlabel{#1}}
 \define@key{catalogue}{description}{\def\KVdescription{#1}}
 \define@key{catalogue}{location}{\def\KVlocation{#1}}
@@ -58,26 +86,17 @@
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{catalogue}{figures}{\def\KVfigures{#1}}
+\define@key{catalogue}{literature}{\def\KVliterature{#1}}
 
-\define@boolkey{catalogue}[KV]{mark}[true]{}
-
-
-\let\LabelCref\labelcref
-\renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
-\def\label@cref#1,#2,#3\@nil{%
-  \expandafter\ifx\csname#1-pages\endcsname\relax  % schon definiert??
-    \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
-  \else
-    \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
-  \fi
-  \LabelCref{#1}%
-  \ifx\relax#2\relax % kein label mehr da
-    \def\next{}%
-  \else 
-    \def\next{\label@cref#2,#3\@nil}%
-  \fi
-  \next}
+\makeatother
+%----------------------python
+\makeatletter
+	\newwrite\myfile
+	\immediate\openout\myfile=\jobname.sti
+	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
+%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
+	\newcommand{\ausgabe}[2]{#2}
+	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \makeatother
 
 
@@ -85,48 +104,27 @@
 \date{}
 \author{XY}
 
-\crefmultiformat{subsection}{#2#1#3}{; #2#1#3}{; #2#1#3}{; #2#1#3}
-
-\crefmultiformat{figure}{#2Taf. #1#3}{; #2#1#3}{; #2#1#3}{; #2#1#3}
-\crefrangeformat{figure}{#3Taf. #1#4--#5Taf. #2#6}
-\addto\captionsngerman{%
-\crefformat{figure}{#2Taf. #1#3}
-}
-
 \begin{document}
 \maketitle
 
 \section{Text}
 In meiner Arbeit beschäftige ich mit drei Häusern in Pompeji 
-(\labelcref{haus:M-Fabius-Rufus,haus:Haus-der-Venus,haus:Haus-des-Wilden-Ebers}).
-Die Grundrisspläne: \cref{fig:M-Fabius-Rufus,fig:Haus-der-Venus,fig:Haus-des-Wilden-Ebers}.
-
-\begin{figure}
-\includegraphics[width=.5\textwidth]{example-image-a} 
-\caption{Das Haus des Wilden Ebers.}
-\label{fig:Haus-des-Wilden-Ebers}
-\end{figure}
+(\labelcref{haus:Haus-des-Wilden-Ebers}).
+%Eintrag:M-Fabius-Rufus
+%Eintrag:Haus-des-Wilden-Ebers
+%Eintrag:Haus-der-Venus
 
 \clearpage
-Dabei zeigt sich, dass das Haus des M. Fabius Rufus (\labelcref{haus:M-Fabius-Rufus}; \cref{fig:M-Fabius-Rufus}) das größte ist, 
-und das Haus des Wilden Ebers (\labelcref{haus:Haus-des-Wilden-Ebers}; \cref{fig:Haus-des-Wilden-Ebers}) das kleinste.
+Dabei zeigt sich, dass das Haus des M. Fabius Rufus das größte ist, 
+und das Haus des Wilden Ebers das kleinste.
 
-
-\begin{figure}
-\includegraphics[width=.5\textwidth]{example-image-b} 
-\caption{Das Haus des M. Fabius Rufus.}
-\label{fig:M-Fabius-Rufus}
-\end{figure}
 
 \clearpage
-Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ und ›Haus der Venus‹ (\cref{fig:Haus-der-Venus})zudem in der Insula 4.
-
+Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ und ›Haus der Venus‹ zudem in der Insula 4.
+%Eintrag:Haus-des-Wilden-Ebers
+%Eintrag:Haus-der-Venus
 (\labelcref{haus:M-Fabius-Rufus,haus:Haus-der-Venus,haus:Haus-des-Wilden-Ebers}).
-\begin{figure}
-\includegraphics[width=.5\textwidth]{example-image-c} 
-\caption{Das Haus der Venus.}
-\label{fig:Haus-der-Venus}
-\end{figure}
+
 \clearpage
 
 \labelcref{haus:Haus-der-Venus}
@@ -143,8 +141,7 @@ Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ un
 	interiorM={S/W-Mosaik},
 	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
 	interiorS={Bronzene Statue eines Epheben},
-	figures={fig:M-Fabius-Rufus},
-	mark,
+	mark={\ausgabe{}{}}
 }
 
 \catalogueentry{%
@@ -155,8 +152,7 @@ Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ un
 	location={Regio VII, Insula 4, Eingang 48, 43},
 	interiorM={S/W-Mosaik},
 	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
-	figures = {fig:Haus-des-Wilden-Ebers},
-	mark,
+	mark={\ausgabe{}{}},
 }
 
 \catalogueentry{%
@@ -166,8 +162,7 @@ Alle Häuser liegen in der Regio VII, die Häuser ›Haus des Wilden Ebers‹ un
 	description={Schönes großes Haus},
 	location={Regio VII, Insula 4, Eingang 12, 23},
 	interior={Keine Innenausstattung},
-	figures={fig:Haus-der-Venus},
-	mark,
+	mark={\ausgabe{}{}},
 }
 
 
