@@ -32,19 +32,12 @@
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}
 			}{}%
 \begin{labeling}{Beschreibung}
-%	\footnotesize %
-%	\setlength{\itemsep}{0pt}%
-%    \setlength{\parskip}{0pt}%
-%    \setlength{\parsep}{0pt}%
 \ifdef{\KVdescription}{\item[Beschreibung] \KVdescription}{}%
 \ifdef{\KVlocation}{\item[Verortung] \KVlocation}{}%
 \ifdef{\KVinterior}{%
 	\item[Ausstattung] \KVinterior %
 	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
 	\begin{labeling}{Wandgemälde}
-%		\setlength{\itemsep}{0pt}%
-%    		\setlength{\parskip}{0pt}%
-%    		\setlength{\parsep}{0pt}%
 			\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
 			\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
 			\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
@@ -54,16 +47,13 @@
 	\ifboolexpr{bool{@KVinteriorM} or bool {@KVinteriorW} or bool {@KVinteriorS}}{%
 		\item[Ausstattung]%
 	\begin{labeling}{Wandgemälde}	
-%			\setlength{\itemsep}{0pt}
-%	 		\setlength{\parskip}{0pt}%
-%    			\setlength{\parsep}{0pt}%
 				\ifdef{\KVinteriorM}{\item[Mosaike:] \KVinteriorM}{}
 				\ifdef{\KVinteriorW}{\item[Wandgemälde:] \KVinteriorW}{}
 				\ifdef{\KVinteriorS}{\item[Statuen:] \KVinteriorS}{}
 			\end{labeling}
 	}{}}%
 \ifdef{\KVsize}{	\item[Größe] \SI{\KVsize}{\meter\squared}}{}%
-\ifdef{\KVliterature}{\item[Erwähnungen]S.\ \KVliterature}{}%		oder \pno{}
+\ifdef{\KVbackref}{\item[Erwähnungen]S.\ \KVbackref}{}%		oder \pno{}
 \end{labeling}
 \endgroup
 }
@@ -81,7 +71,7 @@
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
-\define@key{catalogue}{literature}{\def\KVliterature{#1}}
+\define@key{catalogue}{backref}{\def\KVbackref{#1}}
 
 \makeatother
 %----------------------python
@@ -396,27 +386,27 @@ oder Stichwörter und Seiten werden mit  \Macro{stichworttabelle} tabellerisch a
 
 Für unser konkretes Beispiel der Katalogeinträge bedeutet dies, dass das Makro \Macro{ausgabe} in die Katalogeintragdefinition integriert werden muss.
 \begin{lstlisting}[style=number]
-\define@key{catalogue}{literature}{\def\KVliterature{#1}}
+\define@key{catalogue}{backref}{\def\KVbackref{#1}}
 \end{lstlisting}
-Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{literature} angegeben ist (hier \emph{Haus}), an den Befehl \Macro{ausgabe} übergeben:
+Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{backref} angegeben ist (hier \emph{Haus}), an den Befehl \Macro{ausgabe} übergeben:
 \begin{lstlisting}[style=number]
 \catalogueentry{%
-	literature={\ausgabe{Haus}{}},
+	backref={\ausgabe{Haus}{}},
 }
 \end{lstlisting}
 Das bedeutet selbstverständlich, dass im Fließtext entsprechend \Macro{eintrag}\{Haus\} gesetzt werden muss.
 
-%%%Wer es etwas einfacher haben möchte, wählt in der Definition von \Command{literature} einen automatisch einmaligen Wert, 
+%%%Wer es etwas einfacher haben möchte, wählt in der Definition von \Command{backref} einen automatisch einmaligen Wert, 
 %%%den man zudem nicht nochmals im Katalog händisch eingeben muss. 
 %%%Ein solcher Wert steckt hinter \Command{KVlabel}, welcher im Zuge der \Command{label}-Definition angelegt ist 
 %%%(was die Definition eines \Command{labels} erfordert, das sich jedoch bei Katalogen ohnehin anbietet).
 %%%\begin{lstlisting}[style=nonumber]
-%%%\define@key{catalogue}{literature}{\def\KVliterature{\ausgabe{\KVlabel}{}}}
+%%%\define@key{catalogue}{backref}{\def\KVbackref{\ausgabe{\KVlabel}{}}}
 %%%\end{lstlisting}
 %%%Und für alle, die sich alle Möglichkeiten offen halten wollen:
 %%%\begin{lstlisting}[style=number]
-%%%\define@key{catalogue}{literature}{%
-%%%	\def\KVliterature{%
+%%%\define@key{catalogue}{backref}{%
+%%%	\def\KVbackref{%
 %%%				\ifdef{#1}%
 %%%						{\ausgabe{#1}{}}
 %%%						{\ifdef{\KVlabel}%
@@ -426,12 +416,12 @@ Das bedeutet selbstverständlich, dass im Fließtext entsprechend \Macro{eintrag
 %%%			}
 %%%}
 %%%\end{lstlisting}
-Wenn etwas in den Katalogeintrag \Command{literature} steht, dann wird dieser Eintrag übernommen,
+Wenn etwas in den Katalogeintrag \Command{backref} steht, dann wird dieser Eintrag übernommen,
 ansonsten wird geschaut, ob das \Command{label} definiert ist und wenn dies nicht der Fall ist, bleibt dieser Katalogeintrag undefiniert und es findet auch keine Weiterverarbeitung statt. 
 
 Für die Darstellung des Katalogeintrages muss ebenfalls eine Neudefinition eingeführt werden:
 \begin{lstlisting}[style=nonumber]
-	\ifdef{\KVliterature}{\item[Erwähnungen] \KVliterature}{}
+	\ifdef{\KVbackref}{\item[Erwähnungen] \KVbackref}{}
 \end{lstlisting}
 
 
@@ -445,7 +435,7 @@ Ein vollständiger Katalogeintrag:
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	literature={\ausgabe{Haus-Fabius}{}},
+	backref={\ausgabe{Haus-Fabius}{}},
 }
 \end{lstlisting}
 Nun wird \emph{Haus} an \Macro{ausgabe} übergeben.
@@ -471,11 +461,12 @@ gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{
 \begin{bsp}
 \catalogueentry{%
 	house={Haus des M. Fabius Rufus},
+	label={haus:M-Fabius-Rufus},
 	size={172},
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	literature={\ausgabe{Haus-Fabius}{}},
+	backref={\ausgabe{Haus-Fabius}{}},
 }
 \end{bsp}
 
@@ -486,7 +477,7 @@ gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
 	location={Regio VII, Insula 4, Eingang 48, 43},
-	literature={\ausgabe{Haus-des-Wilden-Ebers}{}},
+	backref={\ausgabe{Haus-des-Wilden-Ebers}{}},
 }
 \end{bsp}
 Sobald diese Vorarbeiten getan sind, alle Stichwörter entsprechend mit \Macro{eintrag} gesetzt sind, 
@@ -505,12 +496,12 @@ schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
 Die andere, \TeX -immanente Lösung arbeitet über \Macro{labelcref}.
 Das heißt, dass man im Gegensatz zur Python-Variante die Rückverweise nicht manuell setzen kann,
 sondern sie werden automatisch über die im Fließtext gesetzten \Macro{labelcref} erstellt.
-Dafür muss der Code des Katalogeintrages \Command{literature}  geändert werden:
+Dafür muss der Code des Katalogeintrages \Command{backref}  geändert werden:
 
 \begin{lstlisting}[style=number]
 \ifKVmark \item[Erwähnungen] S.~\expandafter\csname\KVlabel-pages\endcsname \fi
   ...
-\define@boolkey{catalogue}[KV]{literature}[true]{}
+\define@boolkey{catalogue}[KV]{backref}[true]{}
 \end{lstlisting}
 
 Zudem muss das Makro \Macro{labelcref} bearbeitet werden,
@@ -534,7 +525,7 @@ sodass \TeX\ die gesetzten Einträge auslesen kann.
   \next}
 \end{lstlisting}
 
-Bei den Katalogeinträgen reicht es, am Ende \Command{literature} einzutragen:
+Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen:
 
 \begin{lstlisting}[style=number]
 \catalogueentry{%
@@ -544,33 +535,19 @@ Bei den Katalogeinträgen reicht es, am Ende \Command{literature} einzutragen:
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	literature,
+	backref,
 }
-\end{lstlisting}
-
-%\renewcommand\thesection{Kat. \Alph{section}}
-
-\begin{bsp}
-\catalogueentry{%
-	house={Haus des M. Fabius Rufus},
-	size={172},
-	description={Haus besteht aus mehreren Einzelgebäuden.},
-	location={Regio VII, Insula 16, Eingang 17--22.},
-	interior={Reicher Fundkomplex.},
-	literature,
-}
-\end{bsp}
-
-\begin{bsp}
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
 	label={Haus-des-Wilden-Ebers},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
 	location={Regio VII, Insula 4, Eingang 48, 43},
-	literature,
+	backref,
 }
-\end{bsp}
+\end{lstlisting}
+Die Seiten, auf denen über ein  \Macro{labelcref} auf ein Katalogeintrag verwiesen wird,
+werden nun beim jeweiligen Katalogeintrag eingetragen und bei jedem Kompilieren ggf. auf den aktuellen Stand gebracht.
 
 
 %%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
