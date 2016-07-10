@@ -327,19 +327,22 @@ anschließend wird die \TeX -Variante vorgestellt.
 Lösungen über andere Programmiersprachen sind auch denkbar.
 
 \section{Problemlösung mit Python}
-Python ist eine interpretierte Programmiersprache, die den Python-Neuling durch weitestgehende Nicht-Nutzung von Klammern verwirrt. 
-Stattdessen nutzt Python Tabulator-Einrückungen, 
-um zusammengehörige Code-Teile zu kennzeichnen. 
-Was erst einmal gewöhnungsbedürftig klingt, 
+
+Python ist eine interpretierte Programmiersprache, die den Python-Neuling
+durch weitestgehende Nicht-Nutzung von Klammern verwirrt. 
+Stattdessen nutzt Python Tabulator-Einrückungen, um zusammengehörige 
+Code-Teile zu kennzeichnen. Was erst einmal gewöhnungsbedürftig klingt, 
 hat in der Praxis Vorteile, denn selbst fremder Python-Code ist erstaunlich gut lesbar. 
 Im aktuellen Anwendungsfall beschränken wir uns jedoch nicht auf Python, 
 sondern nutzen mit  \verb|pandas| eine Erweiterung zur Datenanalyse. 
 \verb|pandas|, ursprünglich zur Analyse von Finanzdaten entwickelt, 
 erleichtert die Arbeit mit strukturierten Daten aller Art. 
-Das Einlesen, Filtern und Aggregieren von Daten jeder Art geht damit erstaunlich einfach, 
-dem interessierten Leser sei eine nähere Beschäftigung mit \verb|pandas| daher ans Herz gelegt.
+Das Einlesen, Filtern und Aggregieren von Daten jeder Art geht damit 
+erstaunlich einfach, dem interessierten Leser sei eine nähere Beschäftigung 
+mit \verb|pandas| daher ans Herz gelegt.
 
-Da Python auf Basis des \LaTeX-Quelltextes keine Information hat, auf welchen Seiten ein Stichwort erwähnt wird, muss dies auf \LaTeX -Ebene weggeschrieben werden. 
+Da Python auf Basis des reinen \LaTeX-Quelltextes keine Information hat, auf welchen Seiten ein Stichwort erwähnt wird, 
+muss dies auf \LaTeX -Ebene weggeschrieben werden. 
 
 Dazu bedienen wir uns des \Macro{newwrite} Befehls, der eine neue Ausgabedatei öffnet.  In der Präambel des \TeX-Dokuments muss aufgeführt werden, dass eine neue Datei geschrieben wird, die den gleichen Namen hat, aber die Endung \Command{.sti}. In diese Datei werden alle Stichwörter und die dazu gehörende Seitenzahl geschrieben, 
 die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
@@ -372,9 +375,32 @@ wobei die Ausgabe des \Macro{ausgabe} Makros zugleich für das konkrete Beispiel
 \end{lstlisting}
 %%%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
 
-Schauen wir uns nun den Python-Code dazu an:
+Schauen wir uns nun den Python-Code dazu an, Listing \ref{lis:py} enthält einen entsprechenden Auszug aus der Datei, den kompletten Quellcode mit einem ausführlich dokumentierten Beispiel findet der geneigte Leser unter \url{http://www.uweziegenhagen.de/?p=3513}. Die durch \LaTeX\ erstellte \texttt{<Stichwort:Seite>} Datei wird hier über den \verb|read_csv| Befehl in einen pandas DataFrame geladen, diesen DataFrame kann man sich als Excel-Tabelle vorstellen, in einer Spalte die Stichwörter, in der anderen die jeweilige Seitenzahl, auf der das Stichwort genannt wurde. Die \texttt{\enquote{result =}} Zeile enthält recht komplexe Logik. Hier wird nach dem jeweiligen Stichwort gruppiert und ein String erstellt, der die Seitenzahlen per Komma und Leerzeichen getrennt enthält. Dabei werden Seiten, auf denen ein Stichwort mehrfach erscheint, auch nur einmal ausgegeben.  Was von diesem Befehlt zurückgegeben wird, wird dann wieder in einen DataFrame verwandelt, um leichter damit arbeiten zu können. Über eine pandas-Funktion wird dieser DataFrame dann in eine \LaTeX-Tabelle geschrieben, die dann direkt in \LaTeX\ importiert werden kann (über den selbstdefinierten \Macro{stichworttabelle} Befehl). Zum Schluss werden in der \LaTeX-Datei mittels eines regulären Ausdrucks die \Macro{ausgabe} Befehle gesucht und die in den Befehlen vorhandenen Seitenzahlen durch die (möglicherweise) aktuellere Version im DataFrame ersetzt.
 
+\begin{lstlisting}[language=Python,caption={Auszug aus dem Python-Code},label={lis:py}]
+def process(self,jobname):
+ # Lies die Datei im Stichwort:Seite Format
+ df = pd.read_csv(jobname+'.sti',sep=':',names=['Stichwort','Seite'])
+ # Erstelle eine Liste der einzigartigen Stichwörter
+ result = df.groupby(['Stichwort'], as_index=False)['Seite'].agg(lambda x: ', '.join(np.unique(x).astype(str)))
+ # Erstelle einen pandas Dataframe aus der Datenserie
+ result = pd.DataFrame(result) 
 
+ # setze den Index auf die Spalte 'Stichwort'
+ # wird später als Schlüsselfeld genutzt
+ result = result.set_index('Stichwort') 
+
+ # exportiere den DataFrame in eine LaTeX Tabelle
+ result.to_latex(jobname+'.tab',index=True)
+        
+ # Gehe durch die Liste der Stichwort/Seiten Tupel und
+ # suche in der TeX-Datei den \Ausgabe{<Stichwort>}{<Seiten>}
+ # und ersetze den <Seiten> Teil durch die aktuelle Version
+ for index, row in result.iterrows():
+  suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)([0-9, ]*})')
+  self.regReplace(jobname+'.tex',suchmuster,'\\\\ausgabe{'+ index +'}{' + row[0]+'}')
+  print(index,':',row[0])
+\end{lstlisting}
 
 \section{Integration}
 
@@ -493,7 +519,7 @@ schließlich  zurück im \TeX-Editor wiederum einmal kompiliert werden.
 
 
 \section{Problemlösung mit \TeX}
-Die andere, \TeX -immanente Lösung arbeitet über \Macro{labelcref}.
+Die andere, \TeX -immanente Lösung von Herbert Voß arbeitet über \Macro{labelcref}.
 Das heißt, dass man im Gegensatz zur Python-Variante die Rückverweise nicht manuell setzen kann,
 sondern sie werden automatisch über die im Fließtext gesetzten \Macro{labelcref} erstellt.
 Dafür muss der Code des Katalogeintrages \Command{backref}  geändert werden:
