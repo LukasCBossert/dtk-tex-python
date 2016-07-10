@@ -546,9 +546,37 @@ Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen:
 	backref,
 }
 \end{lstlisting}
+Für das aufgeführt Beispiel %Beispiel-PDF Seite 3 von catalogueentry-tex_mwe.tex
+wurde die \Macro{section} des Katalogteils geändert, damit die \Macro{labelcref}-Einträge das Kürzel ›Kat. A.1‹, etc. bekommen.
+\begin{lstlisting}[style=number]
+\section{Katalogteil}
+\renewcommand\thesection{Kat. \Alph{section}}
+\end{lstlisting}
+
 Die Seiten, auf denen über ein  \Macro{labelcref} auf ein Katalogeintrag verwiesen wird,
 werden nun beim jeweiligen Katalogeintrag eingetragen und bei jedem Kompilieren ggf. auf den aktuellen Stand gebracht.
 
+\section{Zusammenfassung}
+Ausgehend von dem Wunsch einen Katalog in einer wissenschaftlichen Arbeit möglichst effizient zu gestalten, 
+wurde die Lösung über die Definition verschiedener  \Command{keys} präsentiert,
+die eine einheitliche Programmierung der Eingabe und Gestaltung der Ausgabe ermöglichen.
 
+Zwei Möglichkeiten wurden vorgestellt,
+wie man einen Rückverweis im jeweiligen Katalogteil auf die Seite mit der Erwähnung einbauen kann.
+Die erste Lösung arbeitet mit einem Python-Code, 
+bei dem man den Marker \Macro{eintrag}\{Stichwort\} im Text selbst setzen kann und bei dem die Seitenzahl über 
+\Macro{ausgabe}\{Stichwort\}\{\} im Katalogeintrag ausgegeben wird.
+
+Die zweite Möglichkeit arbeitet mit \TeX\ eigenen Mitteln,
+indem es die \Macro{labelcref} nutzt, mit denen auf die Katalogeinträge verwiesen wird.
+Diese Variante erfordert kein händisches Setzen der Marker im Text,
+führt dann jedoch nur die Seiten auf, auf denen auch ein entsprechendes  \Macro{labelcref} gesetzt ist.
+
+Für beide Lösungen wurde ein Minimales Working Example erstellt,
+sodass man diese Varianten ausprobieren kann.\footnote{Für Python-Code:
+\url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-python.tex}
+
+Für \TeX -Code: 
+\url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-tex.tex}.}
 %%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
