@@ -1,13 +1,10 @@
 \documentclass[ngerman]{dtk}
 \ifluatex\else
 \usepackage[utf8]{inputenc}
-%\usepackage[latin9]{inputenc}
 \fi
 \usepackage{siunitx}
 \usepackage{framed}
 \usepackage{booktabs}
-%\usepackage{etoolbox}
-%\usepackage{keyval}
 \usepackage{cleveref}
 
 \lstset{literate=%
@@ -59,15 +56,15 @@
 }
 
 \makeatletter
-\newbool{@KVinteriorM}%Mosaik
-\newbool{@KVinteriorW}%Wandgemälde
-\newbool{@KVinteriorS}%Statue
+\newbool{@KVinteriorM}
+\newbool{@KVinteriorW}
+\newbool{@KVinteriorS}
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
 \define@key{catalogue}{label}{\def\KVlabel{#1}}
 \define@key{catalogue}{description}{\def\KVdescription{#1}}
 \define@key{catalogue}{location}{\def\KVlocation{#1}}
 \define@key{catalogue}{size}{\def\KVsize{#1}}
-\define@key{catalogue}{interior}{\def\KVinterior{#1}}%Innenausstattung
+\define@key{catalogue}{interior}{\def\KVinterior{#1}}
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
@@ -79,7 +76,6 @@
 	\newwrite\myfile
 	\immediate\openout\myfile=\jobname.sti
 	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
-%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
 	\newcommand{\ausgabe}[2]{#2}
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \makeatother
@@ -148,8 +144,8 @@ als \Command{house} bezeichnet und als Resultat soll der Wert im Makro \Macro{KV
 \begin{lstlisting}[style=noNumber]
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
 \end{lstlisting}
-Dem Beispiel entsprechend können alle Kategorien als Schlüssel angelegt werden:
-\begin{lstlisting}[style=number]
+Dem Beispiel entsprechend können alle Kategorien als Schlüssel angelegt werden (\cref{lis:cat-key}):
+\begin{lstlisting}[style=number,caption={Definition der Schlüssel},label={lis:cat-key}]
 \makeatletter
 \define@key{catalogue}{house}{\def\KVhouse{#1}}
 \define@key{catalogue}{label}{\def\KVlabel{#1}}
@@ -171,14 +167,13 @@ es zu keinen Problemen mit den jeweils definierten Schlüsseln kommt,
 da diese für jeden Katalogeintrag neu definiert werden.
 Dann sollen die  Einträge im Flattersatz gesetzt werden (\Macro{RaggedRight}) und schließlich die Angabe,
  welche Schlüsselfamilie (hier \Command{catalogue}) auszulesen ist.
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=number,caption={Definition der Katalogeinträge, Anfang},label={lis:cat-1}]
 \newcommand\catalogueentry[1]{%
 \begingroup
 \RaggedRight
 \setkeys{catalogue}{#1}
 ...
 \end{lstlisting}
-
 Es folgt in der Definition die Verarbeitung der einzelnen Schlüssel:
 Da nur die Ausgabe einer Kategorie erfolgen soll,
 wenn diese auch mit Informationen versehen ist,
@@ -186,7 +181,7 @@ wird dies über die Abfrage \Macro{ifdef} erledigt.
 Der Inhalt der Kategorie \Command{house} wird als \Macro{section}-Titel verwendet und, wenn vorhanden, mit einem \Macro{label} versehen.
 Die weiteren Kategorien sollen in einer \Environment{labeling}-Umgebung aufgelistet werden.
 Die Definition wird mit \Macro{endgroup} geschlossen.
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=number,caption={Definition der Katalogeinträge, Fortsetzung},label={lis:cat-2}]
 ...
 \ifdef{\KVhouse}{\section{\KVhouse
 			\ifdef{\KVlabel}{\label{\KVlabel}}{}}}{}
@@ -208,9 +203,9 @@ Die Definition wird mit \Macro{endgroup} geschlossen.
 
 Mit dieser Einstellung lassen sich die Katalogeinträge schon sehr gut darstellen.
 Im Fließtext des Hauptdokuments kann man an gewünschter Stelle mit \Macro{catalogueentry} einen Katalogeintrag eintragen.
-So wird aus den folgenden Angaben 
+So wird aus den folgenden Angaben (\cref{lis:cat-rufus})
 
-\begin{lstlisting}[style=noNumber]
+\begin{lstlisting}[style=noNumber,caption={Katalogeintrag für das Haus des M. Fabius Rufus},label={lis:cat-rufus}]
 \catalogueentry{%
 	house={Haus des M. Fabius Rufus},
 	label={haus:M-Fabius-Rufus},
@@ -250,8 +245,8 @@ Allerdings besteht die Kategorie \Command{interior} [Ausstattung]  zusätzlich a
 Diese sollen auch dann angezeigt werden, wenn \Command{interior} selbst nicht definiert ist.
 
 Ein solcher Fall tritt beim ›Haus des Wilden Ebers‹ auf. \eintrag{Haus-des-Wilden-Ebers}
-Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt:
-\begin{lstlisting}[style=noNumber]
+Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt (\cref{lis:cat-eber}):
+\begin{lstlisting}[style=noNumber,caption={Katalogeintrag für das Haus des Wilden Ebers},label={lis:cat-eber}]
 \catalogueentry{%
 	house={Haus des Wilden Ebers},
 	label={Haus-des-Wilden-Ebers2},
@@ -276,24 +271,23 @@ So wird daraus:\eintrag{Haus-des-Wilden-Ebers}
 \end{bsp}
 Um zu diesem Ergebnis zu kommen, 
 ist es notwendig, mit Booleschen Operatoren zu arbeiten.
-Dafür müssen bei den \Command{key}-Definitionen drei Operatoren eingeführt werden:
-\begin{lstlisting}[style=number]
+Dafür müssen bei den \Command{key}-Definitionen drei Operatoren eingeführt werden (\cref{lis:cat-bool}):
+\begin{lstlisting}[style=number,caption={Definition der Booleschen Operatoren},label={lis:cat-bool}]
 \newbool{@KVinteriorM}%Mosaik
 \newbool{@KVinteriorW}%Wandgemälde
 \newbool{@KVinteriorS}%Statue
 \end{lstlisting}
 Diese Booleschen Operatoren werden bei der Definition der einzelnen Einträge eingebaut und als 
 \Command{true} gesetzt, wenn dieser Eintrag mit Informationen versehen wird.
-Konkret sieht die Modifikation so aus:
- \begin{lstlisting}[style=number]
+Konkret sieht die Modifikation so aus (\cref{lis:cat-bool2}):
+ \begin{lstlisting}[style=number,caption={Einsetzten der Booleschen Operatoren in die Schlüssel},label={lis:cat-bool2}]
 \define@key{catalogue}{interiorM}{\def\KVinteriorM{#1}\booltrue{@KVinteriorM}}
 \define@key{catalogue}{interiorW}{\def\KVinteriorW{#1}\booltrue{@KVinteriorW}}
 \define@key{catalogue}{interiorS}{\def\KVinteriorS{#1}\booltrue{@KVinteriorS}}
 \end{lstlisting}
-
 Zudem müssen die Booleschen Operatoren bei der Ausgabe der Katalogeinträge eingesetzt werden,
-sodass geprüft wird (\Macro{ifboolexpr}), ob einer oder mehrere der Operatoren auf \Command{true} gesetzt ist.
-\begin{lstlisting}[style=number]
+sodass geprüft wird (\Macro{ifboolexpr}), ob einer oder mehrere der Operatoren auf \Command{true} gesetzt ist (\cref{lis:cat-bool3}).
+\begin{lstlisting}[style=number,caption={Einsetzten der Booleschen Operatoren in den Katalogeintrag},label={lis:cat-bool3}]
 \ifdef{\KVinterior}{%
 	\item[Ausstattung] \KVinterior 
 	\ifboolexpr{bool{@KVinteriorM} 
@@ -327,7 +321,6 @@ anschließend wird die \TeX -Variante vorgestellt.
 Lösungen über andere Programmiersprachen sind auch denkbar.
 
 \section{Problemlösung mit Python}
-
 Python ist eine interpretierte Programmiersprache, die den Python-Neuling
 durch weitestgehende Nicht-Nutzung von Klammern verwirrt. 
 Stattdessen nutzt Python Tabulator-Einrückungen, um zusammengehörige 
@@ -351,7 +344,6 @@ die mit dem Makro \Macro{eintrag}\{Stichwort\}  definiert sind.
 	\immediate\openout\myfile=\jobname.sti
 	\newcommand{\eintrag}[1]{\immediate\write\myfile{#1:\thepage}}
 \end{lstlisting}
-
 Für die spätere gesammelte Anzeige der Stichwörter und die entsprechende Seitenzahl müssen zwei weitere Befehle definiert 
 werden:
 
@@ -365,7 +357,6 @@ Die erste sorgt dafür, dass bei dem  \Macro{ausgabe}\{Stichwort\}\{~\}  Makro d
 
 Zusammengesetzt sieht der Text in der Präambel wie folgt aus,
 wobei die Ausgabe des \Macro{ausgabe} Makros zugleich für das konkrete Beispiel abgeändert wurde.
-%Das Ganze noch in die Umgebung \Macro{makeatletter} und \Macro{makeatother} und fertig ist die Vorarbeit in der Prämbel:
 \begin{lstlisting}[style=number]
 	\newwrite\myfile
 	\immediate\openout\myfile=\jobname.sti
@@ -373,8 +364,6 @@ wobei die Ausgabe des \Macro{ausgabe} Makros zugleich für das konkrete Beispiel
 	\newcommand{\ausgabe}[2]{#2}
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \end{lstlisting}
-%%%	\newcommand{\ausgabe}[2]{#1 was referenced on page(s): #2}
-
 Schauen wir uns nun den Python-Code dazu an, das folgende Listing enthält einen entsprechenden Auszug aus der Datei, den kompletten Quellcode mit einem ausführlich dokumentierten Beispiel findet der geneigte Leser unter \url{http://www.uweziegenhagen.de/?p=3513}. Die durch \LaTeX\ erstellte \texttt{<Stichwort:Seite>} Datei wird hier über den \verb|read_csv| Befehl in einen pandas DataFrame geladen. Diesen DataFrame kann man sich als Tabelle mit zwei Spalten vorstellen, in einer Spalte die Stichwörter, in der anderen die jeweilige Seitenzahl, auf der das Stichwort genannt wurde. 
 
 Die \texttt{\enquote{result =}} Zeile enthält recht komplexe Logik. Hier wird nach dem jeweiligen Stichwort gruppiert und ein String erstellt, der die Seitenzahlen per Komma und Leerzeichen getrennt enthält. Dabei werden Seiten, auf denen ein Stichwort mehrfach erscheint, auch nur einmal ausgegeben.  Was von diesem Befehlt zurückgegeben wird, wird dann wieder in einen pandas DataFrame verwandelt, um leichter damit arbeiten zu können. Über eine weitere pandas-Funktion wird dieser DataFrame dann in eine \LaTeX-Tabelle geschrieben, die dann direkt in das Dokument importiert werden kann (über den selbstdefinierten \Macro{stichworttabelle} Befehl). Zum Schluss werden in der \LaTeX-Datei mittels eines regulären Ausdrucks die \Macro{ausgabe} Befehle gesucht und die in den Befehlen vorhandenen Seitenzahlen durch die (unter Umständen) aktuellere Version des Strings im DataFrame ersetzt.
@@ -413,7 +402,7 @@ Entweder werden alle Seitenzahlen zu einem Stichwort angezeigt, dies erfolgt üb
 oder Stichwörter und Seiten werden mit  \Macro{stichworttabelle} tabellerisch aufgelistet.
 
 Für unser konkretes Beispiel der Katalogeinträge bedeutet dies, dass das Makro \Macro{ausgabe} in die Katalogeintragdefinition integriert werden muss.
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=nonumber]
 \define@key{catalogue}{backref}{\def\KVbackref{#1}}
 \end{lstlisting}
 Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{backref} angegeben ist (hier \emph{Haus}), an den Befehl \Macro{ausgabe} übergeben:
@@ -423,27 +412,6 @@ Damit wird der Wert, der im \Macro{catalogueentry} unter \Command{backref} angeg
 }
 \end{lstlisting}
 Das bedeutet selbstverständlich, dass im Fließtext entsprechend \Macro{eintrag}\{Haus\} gesetzt werden muss.
-
-%%%Wer es etwas einfacher haben möchte, wählt in der Definition von \Command{backref} einen automatisch einmaligen Wert, 
-%%%den man zudem nicht nochmals im Katalog händisch eingeben muss. 
-%%%Ein solcher Wert steckt hinter \Command{KVlabel}, welcher im Zuge der \Command{label}-Definition angelegt ist 
-%%%(was die Definition eines \Command{labels} erfordert, das sich jedoch bei Katalogen ohnehin anbietet).
-%%%\begin{lstlisting}[style=nonumber]
-%%%\define@key{catalogue}{backref}{\def\KVbackref{\ausgabe{\KVlabel}{}}}
-%%%\end{lstlisting}
-%%%Und für alle, die sich alle Möglichkeiten offen halten wollen:
-%%%\begin{lstlisting}[style=number]
-%%%\define@key{catalogue}{backref}{%
-%%%	\def\KVbackref{%
-%%%				\ifdef{#1}%
-%%%						{\ausgabe{#1}{}}
-%%%						{\ifdef{\KVlabel}%
-%%%							{\ausgabe{\KVlabel}}
-%%%							{}%
-%%%						}
-%%%			}
-%%%}
-%%%\end{lstlisting}
 Wenn etwas in den Katalogeintrag \Command{backref} steht, dann wird dieser Eintrag übernommen,
 ansonsten wird geschaut, ob das \Command{label} definiert ist und wenn dies nicht der Fall ist, bleibt dieser Katalogeintrag undefiniert und es findet auch keine Weiterverarbeitung statt. 
 
@@ -519,7 +487,7 @@ Das heißt, dass man im Gegensatz zur Python-Variante die Rückverweise nicht ma
 sondern sie werden automatisch über die im Fließtext gesetzten \Macro{labelcref} erstellt.
 Dafür muss der Code des Katalogeintrages \Command{backref}  geändert werden:
 
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=number,caption={Modifkation im Katalogeintrag},label={lis:cat-tex1}]
 \ifKVmark \item[Erwähnungen] S.~\expandafter\csname\KVlabel-pages\endcsname \fi
   ...
 \define@boolkey{catalogue}[KV]{backref}[true]{}
@@ -528,17 +496,17 @@ Dafür muss der Code des Katalogeintrages \Command{backref}  geändert werden:
 Zudem muss das Makro \Macro{labelcref} bearbeitet werden,
 sodass \TeX\ die gesetzten Einträge auslesen kann.
 
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=number,caption={Ergänzung in der Präambel},label={lis:cat-tex2}]
 \let\LabelCref\labelcref
 \renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
 \def\label@cref#1,#2,#3\@nil{%
-  \expandafter\ifx\csname#1-pages\endcsname\relax  % schon definiert??
+  \expandafter\ifx\csname#1-pages\endcsname\relax %
     \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
   \else
     \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
   \fi
   \LabelCref{#1}%
-  \ifx\relax#2\relax % kein label mehr da
+  \ifx\relax#2\relax %
     \def\next{}%
   \else 
     \def\next{\label@cref#2,#3\@nil}%
@@ -546,30 +514,17 @@ sodass \TeX\ die gesetzten Einträge auslesen kann.
   \next}
 \end{lstlisting}
 
-Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen:
+Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen (\cref{lis:cat-backref}):
 
-\begin{lstlisting}[style=number]
+\begin{lstlisting}[style=number,caption={Ergänzung im Katalogeeintrag},label={lis:cat-backref}]]
 \catalogueentry{%
-	house={Haus des M. Fabius Rufus},
-	label={haus:M-Fabius-Rufus},
-	size={172},
-	description={Haus besteht aus mehreren Einzelgebäuden.},
-	location={Regio VII, Insula 16, Eingang 17--22.},
-	interior={Reicher Fundkomplex.},
-	backref,
-}
-\catalogueentry{%
-	house={Haus des Wilden Ebers},
-	label={Haus-des-Wilden-Ebers},
-	size={54},
-	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
+...
 	backref,
 }
 \end{lstlisting}
 Für das aufgeführt Beispiel %Beispiel-PDF Seite 3 von catalogueentry-tex_mwe.tex
-wurde die \Macro{section} des Katalogteils geändert, damit die \Macro{labelcref}-Einträge das Kürzel ›Kat. A.1‹, etc. bekommen.
-\begin{lstlisting}[style=number]
+wurde die \Macro{section} des Katalogteils geändert, damit die \Macro{labelcref}-Einträge das Kürzel ›Kat. A.1‹, etc. bekommen (\cref{lis:cat-rename}).
+\begin{lstlisting}[style=number,caption={Modifkation der Namensgebung für Katalogeeinträge},label={lis:cat-rename}]
 \section{Katalogteil}
 \renewcommand\thesection{Kat. \Alph{section}}
 \end{lstlisting}
