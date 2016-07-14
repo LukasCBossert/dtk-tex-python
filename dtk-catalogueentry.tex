@@ -132,7 +132,7 @@ die wiederum auf die Untergruppen Mosaik, Wandgemälde und Skulptur aufgeschlüs
 Zum Schluss soll im Katalogeintrag angezeigt werden, 
 auf welchen Seiten des Fließtextes das Haus genannt wird.
 
-Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit Hilfe des   \Package{keyval} Pakets.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
+Die gefundene Lösung für die Umsetzung der Anforderungen funktioniert mit Hilfe des   \Package{keyval}-Pakets.\footnote{Basierend auf der Idee vorgestellt auf: \url{http://tex.stackexchange.com/a/254336/98739}}
 Dafür werden in der Präambel verschiedene Schlüssel (\Command{keys}) definiert.
 In der Grundversion sieht die Definition eines Eintrags wie folgt aus:\footnote{Vgl. \url{http://www.tug.org/tugboat/tb30-1/tb94wright-keyval.pdf}}
 \begin{lstlisting}[style=noNumber]
@@ -213,9 +213,9 @@ So wird aus den folgenden Angaben (\cref{lis:cat-rufus})
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	interiorM={S/W-Mosaik},
-	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
-	interiorS={Bronzene Statue eines Epheben},
+	interiorM={S/W-Mosaik.},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira etc.},
+	interiorS={Bronzene Statue eines Epheben.},
 }
 \end{lstlisting}
 ein Katalogeintrag, der so aussieht:\eintrag{Haus-Rufus}
@@ -227,9 +227,9 @@ ein Katalogeintrag, der so aussieht:\eintrag{Haus-Rufus}
 	description={Haus besteht aus mehreren Einzelgebäuden.},
 	location={Regio VII, Insula 16, Eingang 17--22.},
 	interior={Reicher Fundkomplex.},
-	interiorM={S/W-Mosaik},
-	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira, etc.},
-	interiorS={Bronzene Statue eines Epheben},
+	interiorM={S/W-Mosaik.},
+	interiorW={Dionysius mit einer Mänade, Narzissus und ein Cupido, Hercules und Deinira etc.},
+	interiorS={Bronzene Statue eines Epheben.},
 }
 \end{bsp}
 Wie man bei diesem Beispiel sieht, ist die Reihenfolge, in der die Kategorien
@@ -252,9 +252,9 @@ Im Fließtext ist der Katalogeintrag wie folgt ausgefüllt (\cref{lis:cat-eber})
 	label={Haus-des-Wilden-Ebers2},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
-	interiorM={S/W-Mosaik},
-	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+	location={Regio VII, Insula 4, Eingang 48, 43.},
+	interiorM={S/W-Mosaik.},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus.},
 }
 \end{lstlisting}
 So wird daraus:\eintrag{Haus-des-Wilden-Ebers}
@@ -264,9 +264,9 @@ So wird daraus:\eintrag{Haus-des-Wilden-Ebers}
 	label={Haus-des-Wilden-Ebers},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
-	interiorM={S/W-Mosaik},
-	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus},
+	location={Regio VII, Insula 4, Eingang 48, 43.},
+	interiorM={S/W-Mosaik.},
+	interiorW={Venus, Leda und der Schwan, Ariadne und Theseus.},
 }
 \end{bsp}
 Um zu diesem Ergebnis zu kommen, 
@@ -441,7 +441,7 @@ Im Folgenden Fall ist dies der Wert vom Katalogeintrag \Command{label}:\eintrag{
 	label={Haus-des-Wilden-Ebers},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
+	location={Regio VII, Insula 4, Eingang 48, 43.},
 }
 \end{lstlisting}
 Während im ersten Fall im Fließtext an gewünschter Stelle \Macro{eintrag}\{Haus-Fabius\} gesetzt werden muss,
@@ -470,7 +470,7 @@ gilt für die zweite Variante \Macro{eintrag}\{Haus-des-Wilden-Ebers\}.\eintrag{
 	label={Haus-des-Wilden-Ebers},
 	size={54},
 	description={Renovierung nach Erdbeben 62\,n.\,Chr.},
-	location={Regio VII, Insula 4, Eingang 48, 43},
+	location={Regio VII, Insula 4, Eingang 48, 43.},
 	backref={\ausgabe{Haus-des-Wilden-Ebers}{}},
 }
 \end{bsp}
@@ -521,7 +521,7 @@ Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen (\cre
 	backref,
 }
 \end{lstlisting}
-Für das aufgeführt Beispiel %Beispiel-PDF Seite 3 von catalogueentry-tex_mwe.tex
+Für das aufgeführt Beispiel %Beispiel-PDF Seite 3 von catalogueentry-tex_mwe.tex %%Lukas
 wurde die \Macro{section} des Katalogteils geändert, damit die \Macro{labelcref}-Einträge das Kürzel ›Kat. A.1‹, etc. bekommen (\cref{lis:cat-rename}).
 \begin{lstlisting}[style=number,caption={Modifkation der Namensgebung für Katalogeeinträge},label={lis:cat-rename}]
 \section{Katalogteil}
@@ -551,7 +551,6 @@ Für beide Lösungen wurde ein Minimales Working Example erstellt,
 sodass man diese Varianten ausprobieren kann.\footnote{Für den Python-Code siehe
 \url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-python.tex}, für den \TeX -Code siehe  
 \url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-tex.tex}.}
-%%\lstinputlisting[style=number,language={[AlLaTeX]{TeX}}]{\jobname.tex}%LCB:Test
 \end{document}
 
 
