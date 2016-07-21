@@ -496,21 +496,28 @@ Zudem muss das Makro \Macro{labelcref} bearbeitet werden,
 sodass \TeX\ die gesetzten Einträge auslesen kann.
 
 \begin{lstlisting}[style=number,caption={Ergänzung in der Präambel},label={lis:cat-tex2}]
+\newwrite\@catalog
+\def\catalog@ref#1#2{%
+  \expandafter\ifx\csname#1\endcsname\relax  % schon definiert??
+    \@namedef{#1}{#2}%
+  \else
+    \expandafter\edef\csname#1\endcsname{\csname#1\endcsname, #2}%
+  \fi}
+\InputIfFileExists{\jobname.ctg}{}{}%
+\immediate\openout\@catalog\jobname.ctg
 \let\LabelCref\labelcref
 \renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
 \def\label@cref#1,#2,#3\@nil{%
-  \expandafter\ifx\csname#1-pages\endcsname\relax %
-    \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
-  \else
-    \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
-  \fi
+  \immediate\write\@catalog{\string\catalog@ref{#1-pages}{\arabic{page}}}
   \LabelCref{#1}%
-  \ifx\relax#2\relax %
+  \ifx\relax#2\relax % kein label mehr da
     \def\next{}%
   \else 
     \def\next{\label@cref#2,#3\@nil}%
   \fi
   \next}
+\AtEndDocument{\closeout\@catalog}
+\makeatother
 \end{lstlisting}
 
 Bei den Katalogeinträgen reicht es, am Ende \Command{backref} einzutragen (\cref{lis:cat-backref}):
