@@ -363,17 +363,19 @@ wobei die Ausgabe des \Macro{ausgabe} Makros zugleich für das konkrete Beispiel
 	\newcommand{\stichworttabelle}{\IfFileExists{\jobname.tab}{\input{\jobname.tab}}{Tab file not found}}
 \end{lstlisting}
 
-Schauen wir uns nun den Python-Code dazu an. Das folgende Listing enthält einen entsprechenden Auszug aus der Datei, den kompletten Quellcode mit einem ausführlich dokumentierten Beispiel findet der geneigte Leser im bereits erwähnten Github Repo. Die durch \LaTeX\ erstellte \texttt{<Stichwort:Seite>} Datei wird hier über den \verb|read_csv| Befehl in einen pandas DataFrame geladen. Diesen DataFrame kann man sich als Tabelle mit zwei Spalten vorstellen, in einer Spalte die Stichwörter, in der anderen die jeweilige Seitenzahl, auf der das Stichwort genannt wurde. 
+Schauen wir uns nun den Python-Code dazu an. Das folgende Listing enthält als Auszug nur die \texttt{process}-Funktion aus der Klasse, den kompletten Quellcode mit einem ausführlich dokumentierten Beispiel findet der geneigte Leser im bereits erwähnten Github Repo. Die durch \LaTeX\ erstellte \texttt{<Stichwort:Seite>} Datei wird hier über den \verb|read_csv| Befehl in einen pandas DataFrame geladen. Diesen DataFrame kann man sich als Tabelle mit zwei Spalten vorstellen, in einer Spalte die Stichwörter, in der anderen die jeweilige Seitenzahl, auf der das Stichwort genannt wurde. 
 
-Die \texttt{\enquote{result =}} Zeile enthält recht komplexe Logik. Hier wird nach dem jeweiligen Stichwort gruppiert und ein String erstellt, der die Seitenzahlen per Komma und Leerzeichen getrennt enthält. Dabei werden Seiten, auf denen ein Stichwort mehrfach erscheint, auch nur einmal ausgegeben.  Was von diesem Befehlt zurückgegeben wird, wird dann wieder in einen pandas DataFrame verwandelt, um leichter damit arbeiten zu können. Über eine weitere pandas-Funktion wird dieser DataFrame dann in eine \LaTeX-Tabelle geschrieben, die dann direkt in das Dokument importiert werden kann (über den selbstdefinierten \Macro{stichworttabelle} Befehl). Zum Schluss werden in der \LaTeX-Datei mittels eines regulären Ausdrucks die \Macro{ausgabe} Befehle gesucht und die in den Befehlen vorhandenen Seitenzahlen durch die (unter Umständen) aktuellere Version des Strings im DataFrame ersetzt.
+Die \texttt{\enquote{result = df.groupby}} Zeile enthält recht komplexe Logik. Hier wird nach dem jeweiligen Stichwort gruppiert und ein String erstellt, der die Seitenzahlen per Komma und Leerzeichen getrennt enthält. Dabei werden Seiten, auf denen ein Stichwort mehrfach erscheint, auch nur einmal ausgegeben.  Was von diesem Befehlt zurückgegeben wird, wird dann wieder in einen pandas DataFrame verwandelt, um leichter damit arbeiten zu können. Über eine weitere pandas-Funktion wird dieser DataFrame dann in eine \LaTeX-Tabelle geschrieben, die dann direkt in das Dokument importiert werden kann (über den selbstdefinierten \Macro{stichworttabelle} Befehl). Zum Schluss werden in der \LaTeX-Datei mittels eines regulären Ausdrucks die \Macro{ausgabe} Befehle gesucht und die in den Befehlen vorhandenen Seitenzahlen durch die (unter Umständen) aktuellere Version des Strings im DataFrame ersetzt.
 
 \begin{lstlisting}[language=Python,caption={Auszug aus dem Python-Code},label={lis:py}]
 def process(self,jobname):
  # Lies die Datei im Stichwort:Seite Format
  df = pd.read_csv(jobname+'.sti',sep=':',names=['Stichwort','Seite'])
- # Erstelle eine Liste der einzigartigen Stichwörter
+
+ # Erstelle die Liste der einzigartigen Stichwörter
  result = df.groupby(['Stichwort'], as_index=False)['Seite'].agg(
- lambda x: ', '.join(np.unique(x).astype(str)))
+       lambda x: ', '.join(np.unique(x).astype(str)))
+
  # Erstelle einen pandas Dataframe aus der Datenserie
  result = pd.DataFrame(result) 
 
@@ -381,7 +383,7 @@ def process(self,jobname):
  # wird später als Schlüsselfeld genutzt
  result = result.set_index('Stichwort') 
 
- # exportiere den DataFrame in eine LaTeX Tabelle
+ # exportiere den pandas DataFrame in eine LaTeX Tabelle
  result.to_latex(jobname+'.tab',index=True)
         
  # Gehe durch die Liste der Stichwort/Seiten Tupel und
@@ -389,8 +391,9 @@ def process(self,jobname):
  # und ersetze den <Seiten> Teil durch die aktuelle Version
  for index, row in result.iterrows():
   suchmuster = re.compile('(\\\\ausgabe{'+ index + '}{)([0-9, ]*})')
-  self.regReplace(jobname+'.tex',suchmuster,'\\\\ausgabe{'+ index +'}{' + row[0]+'}')
-  print(index,':',row[0])
+  self.regReplace(jobname+'.tex', suchmuster,
+        '\\\\ausgabe{'+ index +'}{' + row[0] + '}')
+  print(index, ':', row[0])
 \end{lstlisting}
 
 \section{Integration}
@@ -555,7 +558,7 @@ indem es die \Macro{labelcref} nutzt, mit denen auf die Katalogeinträge verwies
 Diese Variante erfordert kein händisches Setzen der Marker im Text,
 führt dann jedoch nur die Seiten auf, auf denen auch ein entsprechendes  \Macro{labelcref} gesetzt ist.
 
-Für beide Lösungen wurde ein Minimales Working Example erstellt,
+Für beide Lösungen wurde ein Minimalbeispiel erstellt,
 sodass man diese Varianten ausprobieren kann.\footnote{Für den Python-Code siehe
 \url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-python.tex}, für den \TeX -Code siehe  
 \url{https://github.com/LukasCBossert/DTK-TeX-Python/blob/master/catalogueentry-tex.tex}.}
