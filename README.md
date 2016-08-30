@@ -1,6 +1,6 @@
 # Integration von Python in TeX
 
-Dieses Repositorium enthält den Text zum Artikel _Integration von Python in TeX am Beispiel von Katalogeinträgen_ (Die TeXnische Komödie 3/2016) von Lukas C. Bossert und Uwe Ziegenhagen.
+Dieses Repositorium enthält den Text zum Artikel _Integration von Python in TeX am Beispiel von Katalogeinträgen_ (Die TeXnische Komödie 3/2016) von Lukas C. Bossert, Uwe Ziegenhagen und Herbert Voß.
 
 Im Artikel wird beschrieben, wie ein Katalog am Ende einer wissenschaftlichen Arbeit erstellt werden kann.
 Rückverweise im jeweiligen Katalogeintrag zu dessen Erwähnungen im Fließtext stellen dabei das zentrale Problem dar.
@@ -18,4 +18,4 @@ Für die Problemlösung über TeX
 
 
 ====
-(c) 2016 Lukas C. Bossert und Uwe Ziegenhagen
+(c) 2016 Lukas C. Bossert, Uwe Ziegenhagen und Herbert Voß.
