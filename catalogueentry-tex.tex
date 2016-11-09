@@ -62,22 +62,28 @@
 
 \define@boolkey{catalogue}[KV]{mark}[true]{}
 
-
+\newwrite\@catalog
+\def\catalog@ref#1#2{%
+    \expandafter\ifx\csname#1\endcsname\relax  % schon definiert??
+    \@namedef{#1}{#2}%
+    \else
+    \expandafter\edef\csname#1\endcsname{\csname#1\endcsname, #2}%
+    \fi}
+\InputIfFileExists{\jobname.ctg}{}{}%
+\immediate\openout\@catalog\jobname.ctg
 \let\LabelCref\labelcref
 \renewcommand\labelcref[1]{\expandafter\label@cref#1,,\@nil}
 \def\label@cref#1,#2,#3\@nil{%
-  \expandafter\ifx\csname#1-pages\endcsname\relax  % schon definiert??
-    \expandafter\xdef\csname#1-pages\endcsname{\arabic{page}}%
-  \else
-    \expandafter\xdef\csname#1-pages\endcsname{\csname#1-pages\endcsname, \arabic{page}}%
-  \fi
-  \LabelCref{#1}%
-  \ifx\relax#2\relax % kein label mehr da
+    \immediate\write\@catalog{\string\catalog@ref{#1-pages}{\arabic{page}}}
+    \LabelCref{#1}%
+    \ifx\relax#2\relax % kein label mehr da
     \def\next{}%
-  \else 
+    \else 
     \def\next{\label@cref#2,#3\@nil}%
-  \fi
-  \next}
+    \fi
+    \next}
+\AtEndDocument{\closeout\@catalog}
+\renewcommand\labelcref[1]{\@cref{labelcref}{#1}}
 \makeatother
 
 
